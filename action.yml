@@ -1,0 +1,30 @@
+# action.yml
+name: 'Coveralls'
+description: 'Send test coverage data to Coveralls.io for analysis, change tracking, and notifications.'
+author: 'Nick Merwin (Coveralls, Inc.)'
+inputs:
+  github-token:
+    required: true
+  path-to-lcov:
+    description: 'Path to lcov file'
+    required: true
+    default: './coverage/lcov.info'
+  parallel:
+    description: 'Set to true if you are running parallel jobs, then use "parallel_finished: true" for the last action.'
+    required: false
+  parallel-finished:
+    description: 'Set to true for the last action when using "parallel: true".'
+    required: false
+  coveralls-endpoint:
+    description: 'Coveralls Enterprise server (more info: https://enterprise.coveralls.io)'
+    required: false
+    default: 'https://coveralls.io'
+outputs:
+  coveralls-api-result:
+    description: 'Result status of Coveralls API post.'
+branding:
+  color: 'green'
+  icon: 'coveralls.svg'
+runs:
+  using: 'node12'
+  main: './lib/main.js'
