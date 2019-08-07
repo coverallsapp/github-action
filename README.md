@@ -102,14 +102,14 @@ The "Coveralls Finished" step needs to run after all other steps have completed;
 
 ## Demo
 
-![demo](https://s3.amazonaws.com/assets.coveralls.io/Coveralls%20Github%20Action%20Demo%20-%20trimmed.2019-08-07%2013_45_18.gif)
+![demo](https://s3.amazonaws.com/assets.coveralls.io/Coveralls%20Github%20Action%20Demo%20-%20trimmed-4.8.gif)
 
 ### Steps shown:
 
 1. A new function `f` without test coverage is added.
-2. Commit and push changes to a new branch "function/f"
+2. The changes are committed and pushed to a new branch "function/f"
 3. The Action runs on GitHub CI.
-6. The commit on GitHub shows a new check for Coveralls with details "First build on function-f at 92.0%", and links to the Jon on Coveralls.
+6. The commit on GitHub shows a new check for Coveralls with details "First build on function-f at 92.0%", and links to the Job on Coveralls.
 5. Line-by-line results indicate the new function is missing coverage.
 7. Create a pull request with the new branch.
 8. The `pull_request` check runs and the resulting coverage data triggers a `fail` status.
