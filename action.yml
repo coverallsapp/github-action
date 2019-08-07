@@ -24,7 +24,7 @@ outputs:
     description: 'Result status of Coveralls API post.'
 branding:
   color: 'green'
-  icon: 'coveralls.svg'
+  icon: 'percent'
 runs:
   using: 'node12'
   main: './lib/main.js'
