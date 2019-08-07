@@ -66,6 +66,10 @@ The "Coveralls Finished" step needs to run after all other steps have completed.
 
 For [Coveralls Enterprise](https://enterprise.coveralls.io) usage, include the input `coveralls-endpoint: https://<host>`.
 
+## Demo
+
+_gif placeholder_
+
 ## License
 
 [MIT License](LICENSE)
