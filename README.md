@@ -102,7 +102,7 @@ The "Coveralls Finished" step needs to run after all other steps have completed;
 
 ## Demo
 
-![demo](https://s3.amazonaws.com/assets.coveralls.io/Coveralls%20Github%20Action%20Demo-5.5.gif)
+![demo](https://s3.amazonaws.com/assets.coveralls.io/Coveralls%20Github%20Action%20Demo-4.8.gif)
 
 ### Steps shown:
 
