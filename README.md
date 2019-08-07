@@ -8,7 +8,7 @@ When running on "pull_request" events, a comment will be added to the PR with de
 
 This step needs to run after your test suite has outputted an LCOV file. Most major test runners can be configured to do so; if you're using Node, see more info [here](https://github.com/nickmerwin/node-coveralls).
 
-The `github-token` input is required so Coveralls can verify the data and create a new check based on the coverage results.
+The `github-token` input is required so Coveralls can verify the repo and create a new check based on the coverage results.
 
 ### Standard Example:
 
@@ -64,7 +64,7 @@ If `path-to-lcov` is omitted, "./coverage/lcov.info" will be used by default. An
 
 The "Coveralls Finished" step needs to run after all other steps have completed.
 
-For (Coveralls Enterprise)[https://enterprise.coveralls.io] usage, include the input `coveralls-endpoint: https://<host>`.
+For [Coveralls Enterprise](https://enterprise.coveralls.io) usage, include the input `coveralls-endpoint: https://<host>`.
 
 ## License
 
