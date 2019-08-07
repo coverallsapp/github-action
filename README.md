@@ -1,6 +1,6 @@
 # Coveralls Github Action
 
-This Github Action posts your test suite's LCOV coverage data to [coveralls.io](https://coveralls.io) for analysis, change tracking, and notifications.
+This Github Action posts your test suite's LCOV coverage data to [coveralls.io](https://coveralls.io) for analysis, change tracking, and notifications. You don't need to add the repo to Coveralls first, it will be created when receiving the post.
 
 When running on "pull_request" events, a comment will be added to the PR with details about how coverage will be affected if merged.
 
@@ -14,7 +14,7 @@ The `github-token` input is required so Coveralls can verify the repo and create
 
 ```yaml
 - name: Coveralls
-  uses: coveralls-app/github-action
+  uses: coverallsapp/github-action
   with:
     github-token: ${{ secrets.github_token }}
     path-to-lcov: ./coverage/lcov.info # optional (default value)
@@ -49,14 +49,14 @@ If `path-to-lcov` is omitted, "./coverage/lcov.info" will be used by default. An
           make test-coverage
 
       - name: Coveralls Parallel
-        uses: coveralls-app/github-action
+        uses: coverallsapp/github-action
         with:
           github-token: ${{ secrets.github_token }}
           parallel: true
           path-to-lcov: ./coverage/lcov.info # optional (default value)
 
       - name: Coveralls Finished
-        uses: coveralls-app/github-action
+        uses: coverallsapp/github-action
         with:
           github-token: ${{ secrets.github_token }}
           parallel-finished: true
