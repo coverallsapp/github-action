@@ -100,7 +100,58 @@ The "Coveralls Finished" step needs to run after all other steps have completed;
 
 ## Demo
 
-_gif placeholder_
+1. Add a new function without test coverage:
+
+![image](https://user-images.githubusercontent.com/1129/62648204-29e08380-b907-11e9-8bec-d4da4ab384ae.png)
+
+---
+
+2. Commit and push changes to a new branch:
+
+![image](https://user-images.githubusercontent.com/1129/62648466-b5f2ab00-b907-11e9-8adc-4c9572510469.png)
+
+---
+
+3. The Action runs on GitHub CI:
+
+![image](https://user-images.githubusercontent.com/1129/62648619-066a0880-b908-11e9-88b2-b2059aaa462e.png)
+
+---
+
+4. The Job is posted to Coveralls:
+
+![image](https://user-images.githubusercontent.com/1129/62648659-184bab80-b908-11e9-9ebd-9877b4f08c62.png)
+
+---
+
+5. Line-by-line results indicate the new function is missing coverage:
+
+![image](https://user-images.githubusercontent.com/1129/62648700-2d283f00-b908-11e9-9a57-494c567d9fe7.png)
+
+---
+
+6. The commit on GitHub shows a new check for Coveralls with details "First build on function-f at 92.0%":
+
+![image](https://user-images.githubusercontent.com/1129/62648765-52b54880-b908-11e9-86f0-1432ec719dde.png)
+
+---
+
+7. Create a pull request with the new branch:
+
+![image](https://user-images.githubusercontent.com/1129/62648841-71b3da80-b908-11e9-96f7-556a07739e63.png)
+
+---
+
+8. The `pull_request` check runs and the resulting coverage data triggers a `fail` status:
+![image](https://user-images.githubusercontent.com/1129/62649005-c9eadc80-b908-11e9-8236-e8c166d50f97.png)
+
+---
+
+9. And a detailed comment is posted:
+
+![image](https://user-images.githubusercontent.com/1129/62649020-d53e0800-b908-11e9-8d22-74a93051b6c4.png)
+
+---
 
 ## [MIT License](LICENSE.md)
 
