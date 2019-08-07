@@ -2,7 +2,7 @@
 
 This GitHub Action posts your test suite's LCOV coverage data to [coveralls.io](https://coveralls.io) for analysis, change tracking, and notifications. You don't need to add the repo to Coveralls first, it will be created when receiving the post.
 
-When running on "pull_request" events, a comment will be added to the PR with details about how coverage will be affected if merged.
+When running on `pull_request` events, a comment will be added to the PR with details about how coverage will be affected if merged.
 
 ## Usage
 
@@ -10,11 +10,13 @@ The action's step needs to run after your test suite has outputted an LCOV file.
 
 ### Inputs:
 
-* `github-token` _(required)_ Must be in form `github-token: ${{ secrets.github_token }}`; Coveralls uses this token to verify the posted coverage data on the repo and create a new check based on the results.
-* `path-to-lcov` _(optional), default: './covrerage/lcov.info')_ Local path to the lcov output file produced by your test suite. An error will be thrown if the file can't be found.
-* `parallel` _(optional)_ Set to true for parallel (or matrix) based steps, where multiple posts to Coveralls will be performed in the check.
-* `parallel-finished` _(optional)_ Set to true in the last job, after the other parallel jobs steps have completed, this will send a webhook to Coveralls to set the build complete.
-* `coveralls-endpoint` _(optional)_ Hostname and protocol: `https://<host>`; Specifies a [Coveralls Enterprise](https://enterprise.coveralls.io) hostname.
+| Name | Requirement | Description |
+| ---- | ----------- | ----------- |
+| `github-token` | _required_ | Must be in form `github-token: ${{ secrets.github_token }}`; Coveralls uses this token to verify the posted coverage data on the repo and create a new check based on the results. |
+| `path-to-lcov` | _optional_ | Default: "./covrerage/lcov.info". Local path to the lcov output file produced by your test suite. An error will be thrown if the file can't be found. This is the file that will be sent to the Coveralls API. |
+| `parallel` | _optional_ | Set to true for parallel (or matrix) based steps, where multiple posts to Coveralls will be performed in the check. |
+| `parallel-finished` | _optional_ | Set to true in the last job, after the other parallel jobs steps have completed, this will send a webhook to Coveralls to set the build complete. |
+| `coveralls-endpoint` | _optional_ | Hostname and protocol: `https://<host>`; Specifies a [Coveralls Enterprise](https://enterprise.coveralls.io) hostname. |
 
 ### Outputs:
 
