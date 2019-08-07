@@ -6,12 +6,20 @@
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha -r ts-node/register src/**/*.spec.ts"
   },
   "author": "Nick Merwin (nick@coveralls.io)",
   "license": "MIT",
   "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.7",
     "@types/node": "^12.6.8",
+    "chai": "^4.2.0",
+    "mocha": "^6.2.0",
+    "nyc": "^14.1.1",
+    "sinon": "^7.4.1",
+    "source-map-support": "^0.5.13",
+    "ts-node": "^8.3.0",
     "typescript": "^3.5.3"
   },
   "dependencies": {
