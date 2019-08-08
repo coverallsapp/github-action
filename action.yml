@@ -1,5 +1,5 @@
 # action.yml
-name: 'Coveralls Action'
+name: 'Coveralls GitHub Action'
 description: 'Send test coverage data to Coveralls.io for analysis, change tracking, and notifications.'
 author: 'Nick Merwin (Coveralls, Inc.)'
 inputs:
