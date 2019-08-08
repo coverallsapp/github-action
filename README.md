@@ -53,7 +53,7 @@ The action's step needs to run after your test suite has outputted an LCOV file.
           make test-coverage
 
       - name: Coveralls
-        uses: coverallsapp/github-action
+        uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.github_token }}
 ```
@@ -85,14 +85,14 @@ The action's step needs to run after your test suite has outputted an LCOV file.
           make test-coverage
 
       - name: Coveralls Parallel
-        uses: coverallsapp/github-action
+        uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.github_token }}
           parallel: true
           path-to-lcov: ./coverage/lcov.info # optional (default value)
 
       - name: Coveralls Finished
-        uses: coverallsapp/github-action
+        uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.github_token }}
           parallel-finished: true
