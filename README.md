@@ -15,7 +15,7 @@ The action's step needs to run after your test suite has outputted an LCOV file.
 | Name                  | Requirement | Description |
 | --------------------- | ----------- | ----------- |
 | `github-token`        | _required_ | Must be in form `github-token: ${{ secrets.github_token }}`; Coveralls uses this token to verify the posted coverage data on the repo and create a new check based on the results. |
-| `path-to-lcov`        | _optional_ | Default: "./covrerage/lcov.info". Local path to the lcov output file produced by your test suite. An error will be thrown if the file can't be found. This is the file that will be sent to the Coveralls API. |
+| `path-to-lcov`        | _optional_ | Default: "./coverage/lcov.info". Local path to the lcov output file produced by your test suite. An error will be thrown if the file can't be found. This is the file that will be sent to the Coveralls API. |
 | `parallel`            | _optional_ | Set to true for parallel (or matrix) based steps, where multiple posts to Coveralls will be performed in the check. |
 | `parallel-finished`   | _optional_ | Set to true in the last job, after the other parallel jobs steps have completed, this will send a webhook to Coveralls to set the build complete. |
 | `coveralls-endpoint`  | _optional_ | Hostname and protocol: `https://<host>`; Specifies a [Coveralls Enterprise](https://enterprise.coveralls.io) hostname. |
