@@ -82,7 +82,8 @@ export async function run() {
 
     process.env.COVERALLS_PARALLEL = process.env.COVERALLS_PARALLEL || core.getInput('parallel');
 
-    const pathToLcov = core.getInput('path-to-lcov');
+    const pathToLcov = core.getInput('path-to-file');
+    const filetype = core.getInput('coverage-format');
 
     if (pathToLcov == '') {
       throw new Error("No Lcov path specified.");
@@ -104,7 +105,7 @@ export async function run() {
       } else {
         core.setOutput('coveralls-api-result', body);
       }
-    });
+    }, { filetype });
 
   } catch (error) {
     core.setFailed(error.message);

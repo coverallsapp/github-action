@@ -5,10 +5,14 @@ author: 'Nick Merwin (Coveralls, Inc.)'
 inputs:
   github-token:
     required: true
-  path-to-lcov:
-    description: 'Path to lcov file'
+  path-to-file:
+    description: 'Path to coverage file'
     required: true
     default: './coverage/lcov.info'
+  coverage-format:
+    description: ' Coverage type. Acccepted values are `lcov` and `cobertura`. Defaults to `lcov`'
+    required: true
+    default: 'lcov'
   parallel:
     description: 'Set to true if you are running parallel jobs, then use "parallel_finished: true" for the last action.'
     required: false
