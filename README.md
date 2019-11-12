@@ -115,6 +115,24 @@ The "Coveralls Finished" step needs to run after all other steps have completed;
 8. The `pull_request` check runs and the resulting coverage data triggers a `fail` status.
 9. A detailed comment is posted.
 
+## Troubleshooting:
+
+### Coveralls comments aren't added to my pull request
+
+Ensure your workflow that invokes the Coveralls action runs on pull requests, e.g.:
+
+```yaml
+on: ["push","pull_request"]
+```
+
+### Coveralls responds with "cannot find matching repository"
+
+Ensure your workflow yaml line for the GitHub token matches *exactly*:
+
+```yaml
+github-token: ${{ secrets.github_token }}
+```
+
 ---
 
 ## [MIT License](LICENSE.md)
