@@ -9,6 +9,10 @@ inputs:
     description: 'Path to coverage file'
     required: true
     default: './coverage/lcov.info'
+  path-to-lcov:
+    description: '(Deprecated)'
+    required: true
+    default: './coverage/lcov.info'
   coverage-format:
     description: ' Coverage type. Acccepted values are `lcov` and `cobertura`. Defaults to `lcov`'
     required: true

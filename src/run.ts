@@ -82,21 +82,28 @@ export async function run() {
 
     process.env.COVERALLS_PARALLEL = process.env.COVERALLS_PARALLEL || core.getInput('parallel');
 
-    const pathToLcov = core.getInput('path-to-file');
+    const pathToFile = core.getInput('path-to-file');
+    const pathToLcov = core.getInput('path-to-lcov');
     const filetype = core.getInput('coverage-format');
+    const defaultPath = './coverage/lcov.info';
+    // for compatibility with the name path-to-lcov - go through these steps
+    // 1. use 'path-to-file' if its not the default path
+    // 2. use 'path-to-lcov' if its not the default
+    // 3. use 'path-to-file' (which will be the default at this point in time - but i made it more explicit)
+    const pathToUse = pathToFile !== defaultPath ? pathToFile : (pathToLcov !== defaultPath) ? pathToLcov : pathToFile;
 
-    if (pathToLcov == '') {
+    if (pathToUse == '') {
       throw new Error("No Lcov path specified.");
     }
 
-    console.log(`Using lcov file: ${pathToLcov}`);
+    console.log(`Using ${filetype} file: ${pathToUse}`);
 
     let file;
 
     try {
-      file = fs.readFileSync(pathToLcov, 'utf8');
+      file = fs.readFileSync(pathToUse, 'utf8');
     } catch (err) {
-      throw new Error("Lcov file not found.");
+      throw new Error(`${filetype} file not found.`);
     }
 
     coveralls.handleInput(file, (err: string, body: string) => {
