@@ -2,7 +2,7 @@
 
 # Coveralls GitHub Action
 
-This GitHub Action posts your test suite's LCOV coverage data to [coveralls.io](https://coveralls.io) for analysis, change tracking, and notifications. You don't need to add the repo to Coveralls first, it will be created when receiving the post.
+This GitHub Action posts your test suite's LCOV coverage data to [coveralls.io](https://coveralls.io/) for analysis, change tracking, and notifications. You don't need to add the repo to Coveralls first, it will be created when receiving the post.
 
 When running on `pull_request` events, a comment will be added to the PR with details about how coverage will be affected if merged.
 
@@ -14,12 +14,12 @@ The action's step needs to run after your test suite has outputted an LCOV file.
 
 | Name                  | Requirement | Description |
 | --------------------- | ----------- | ----------- |
-| `github-token`        | _required_ | Must be in form `github-token: ${{ secrets.github_token }}`; Coveralls uses this token to verify the posted coverage data on the repo and create a new check based on the results. It is built into Github Actions and does not need to be manually specified in your secrets store. [More Info](https://help.github.com/en/articles/virtual-environments-for-github-actions#github_token-secret)|
+| `github-token`        | _required_ | Must be in form `github-token: ${{ secrets.GITHUB_TOKEN }}`; Coveralls uses this token to verify the posted coverage data on the repo and create a new check based on the results. It is built into Github Actions and does not need to be manually specified in your secrets store. [More Info](https://help.github.com/en/articles/virtual-environments-for-github-actions#github_token-secret)|
 | `path-to-file`        | _optional_ | Default: "./coverage/lcov.info". Local path to the coverage output file produced by your test suite. An error will be thrown if the file can't be found. This is the file that will be sent to the Coveralls API. |
 | `coverage-format`     | _optional_ | THe format of your coverage file. Supported values are `cobertura` and `lcov`. defaults to `lcov` |
 | `parallel`            | _optional_ | Set to true for parallel (or matrix) based steps, where multiple posts to Coveralls will be performed in the check. |
 | `parallel-finished`   | _optional_ | Set to true in the last job, after the other parallel jobs steps have completed, this will send a webhook to Coveralls to set the build complete. |
-| `coveralls-endpoint`  | _optional_ | Hostname and protocol: `https://<host>`; Specifies a [Coveralls Enterprise](https://enterprise.coveralls.io) hostname. |
+| `coveralls-endpoint`  | _optional_ | Hostname and protocol: `https://<host>`; Specifies a [Coveralls Enterprise](https://enterprise.coveralls.io/) hostname. |
 
 ### Outputs:
 
@@ -30,73 +30,73 @@ The action's step needs to run after your test suite has outputted an LCOV file.
 * This example assumes you're building a Node project using the command `make test-coverage`, demo here: [nickmerwin/node-coveralls](https://github.com/nickmerwin/node-coveralls)
 
 ```yaml
-  on: ["push","pull_request"]
+on: ["push", "pull_request"]
 
-  name: Test Coveralls
+name: Test Coveralls
 
-  jobs:
+jobs:
 
-    build:
-      name: Build
-      runs-on: ubuntu-latest
-      steps:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
 
-      - uses: actions/checkout@master
+    - uses: actions/checkout@v1
 
-      - name: Use Node.js 10.x
-        uses: actions/setup-node@master
-        with:
-          version: 10.x
+    - name: Use Node.js 10.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 10.x
 
-      - name: npm install, make test-coverage
-        run: |
-          npm install
-          make test-coverage
+    - name: npm install, make test-coverage
+      run: |
+        npm install
+        make test-coverage
 
-      - name: Coveralls
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.github_token }}
+    - name: Coveralls
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ### Complete Parallel Job Example:
 
 ```yaml
-  on: ["push","pull_request"]
+on: ["push", "pull_request"]
 
-  name: Test Coveralls Parallel
+name: Test Coveralls Parallel
 
-  jobs:
+jobs:
 
-    build:
-      name: Build
-      runs-on: ubuntu-latest
-      steps:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
 
-      - uses: actions/checkout@master
+    - uses: actions/checkout@v1
 
-      - name: Use Node.js 10.x
-        uses: actions/setup-node@master
-        with:
-          version: 10.x
+    - name: Use Node.js 10.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 10.x
 
-      - name: npm install, make test-coverage
-        run: |
-          npm install
-          make test-coverage
+    - name: npm install, make test-coverage
+      run: |
+        npm install
+        make test-coverage
 
-      - name: Coveralls Parallel
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.github_token }}
-          parallel: true
-          path-to-lcov: ./coverage/lcov.info # optional (default value)
+    - name: Coveralls Parallel
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        parallel: true
+        path-to-lcov: ./coverage/lcov.info # optional (default value)
 
-      - name: Coveralls Finished
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.github_token }}
-          parallel-finished: true
+    - name: Coveralls Finished
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        parallel-finished: true
 ```
 
 The "Coveralls Finished" step needs to run after all other steps have completed; it will let Coveralls know that all jobs in the build are done and aggregate coverage calculation can be calculated and notifications sent.
@@ -110,11 +110,29 @@ The "Coveralls Finished" step needs to run after all other steps have completed;
 1. A new function `f` without test coverage is added.
 2. The changes are committed and pushed to a new branch "function/f"
 3. The Action runs on GitHub CI.
-6. The commit on GitHub shows a new check for Coveralls with details "First build on function-f at 92.0%", and links to the Job on Coveralls.
+4. The commit on GitHub shows a new check for Coveralls with details "First build on function-f at 92.0%", and links to the Job on Coveralls.
 5. Line-by-line results indicate the new function is missing coverage.
-7. Create a pull request with the new branch.
-8. The `pull_request` check runs and the resulting coverage data triggers a `fail` status.
-9. A detailed comment is posted.
+6. Create a pull request with the new branch.
+7. The `pull_request` check runs and the resulting coverage data triggers a `fail` status.
+8. A detailed comment is posted.
+
+## Troubleshooting:
+
+### Coveralls comments aren't added to my pull request
+
+Ensure your workflow that invokes the Coveralls action runs on pull requests, e.g.:
+
+```yaml
+on: ["push", "pull_request"]
+```
+
+### Coveralls responds with "cannot find matching repository"
+
+Ensure your workflow yaml line for the GitHub token matches *exactly*:
+
+```yaml
+github-token: ${{ secrets.GITHUB_TOKEN }}
+```
 
 ---
 
