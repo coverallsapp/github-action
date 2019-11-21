@@ -25,7 +25,7 @@
   "dependencies": {
     "@actions/core": "file:toolkit/actions-core-0.0.0.tgz",
     "@actions/exec": "file:toolkit/actions-exec-0.0.0.tgz",
-    "coveralls": "^3.0.6",
+    "coveralls": "^3.0.8",
     "request": "^2.88.0"
   }
 }
