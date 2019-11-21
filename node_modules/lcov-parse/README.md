@@ -21,6 +21,7 @@ or
         //process the data here
     });
 
+
 ## Formatting
 
 Using this as a guide: http://ltp.sourceforge.net/coverage/lcov/geninfo.1.php
@@ -69,6 +70,16 @@ It will return JSON like this:
 }
 ```
 
+
+## Cli Usage
+
+    lcov-parse ./lcov.info
+
+or
+
+    cat lcov.info | xargs -0 lcov-parse
+   
+   
 ## Tests
 
     npm install && npm test
