@@ -45,6 +45,7 @@ export async function run() {
     }
 
     process.env.COVERALLS_SERVICE_JOB_ID = jobId
+    process.env.COVERALLS_SERVICE_NUMBER = jobId
 
     const endpoint = core.getInput('coveralls-endpoint');
     if (endpoint != '') {
