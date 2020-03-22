@@ -19,6 +19,7 @@ The action's step needs to run after your test suite has outputted an LCOV file.
 | `parallel`            | _optional_ | Set to true for parallel (or matrix) based steps, where multiple posts to Coveralls will be performed in the check. |
 | `parallel-finished`   | _optional_ | Set to true in the last job, after the other parallel jobs steps have completed, this will send a webhook to Coveralls to set the build complete. |
 | `coveralls-endpoint`  | _optional_ | Hostname and protocol: `https://<host>`; Specifies a [Coveralls Enterprise](https://enterprise.coveralls.io/) hostname. |
+| `base-path`           | _optional_ | Path to the root folder of the project the coverage was collected in. Should be used in monorepos so that coveralls can process the LCOV correctly (e.g. packages/my-project) |
 
 ### Outputs:
 

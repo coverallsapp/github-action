@@ -1,7 +1,9 @@
 import * as core from '@actions/core';
 
-const fs = require('fs');
-const request = require('request');
+import fs from 'fs';
+import path from 'path';
+import request, { Response } from 'request';
+import { adjustLcovBasePath } from './lcov-processor';
 
 const coveralls = require('coveralls');
 
@@ -25,7 +27,7 @@ export async function run() {
     process.env.COVERALLS_GIT_COMMIT = process.env.GITHUB_SHA!.toString();
     process.env.COVERALLS_GIT_BRANCH = process.env.GITHUB_REF!.toString();
 
-    const event = fs.readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8');
+    const event = fs.readFileSync(process.env.GITHUB_EVENT_PATH!, 'utf8');
 
     if (process.env.COVERALLS_DEBUG) {
       console.log("Event Name: " + process.env.GITHUB_EVENT_NAME);
@@ -62,7 +64,7 @@ export async function run() {
         url: `${process.env.COVERALLS_ENDPOINT || 'https://coveralls.io'}/webhook`,
         body: payload,
         json: true
-      }, (error: string, response: string, data: WebhookResult) => {
+      }, (error: string, _response: Response, data: WebhookResult) => {
           if (error) {
             throw new Error(error);
           }
@@ -98,7 +100,11 @@ export async function run() {
       throw new Error("Lcov file not found.");
     }
 
-    coveralls.handleInput(file, (err: string, body: string) => {
+
+    const basePath = core.getInput('base-path');
+    const adjustedFile = basePath ? adjustLcovBasePath(file, basePath) : file;
+
+    coveralls.handleInput(adjustedFile, (err: string, body: string) => {
       if(err){
         core.setFailed(err);
       } else {

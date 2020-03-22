@@ -19,6 +19,9 @@ inputs:
     description: 'Coveralls Enterprise server (more info: https://enterprise.coveralls.io)'
     required: false
     default: 'https://coveralls.io'
+  base-path:
+    description: 'The root folder of the project that originally ran the tests'
+    required: false
 outputs:
   coveralls-api-result:
     description: 'Result status of Coveralls API post.'
