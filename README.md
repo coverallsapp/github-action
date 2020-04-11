@@ -22,7 +22,7 @@ The action's step needs to run after your test suite has outputted an LCOV file.
 
 ### Outputs:
 
-* `coveralls-api-response`: JSON response from the Coveralls API with a status code and url for the Job on Coveralls.
+* `coveralls-api-result`: JSON response from the Coveralls API with a status code and url for the Job on Coveralls.
 
 ### Standard Example:
 
