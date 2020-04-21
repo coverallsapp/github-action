@@ -26,6 +26,7 @@ export async function run() {
     process.env.COVERALLS_SERVICE_NAME = 'github';
     process.env.COVERALLS_GIT_COMMIT = process.env.GITHUB_SHA!.toString();
     process.env.COVERALLS_GIT_BRANCH = process.env.GITHUB_REF!.toString();
+    process.env.COVERALLS_FLAG_NAME = process.env.COVERALLS_FLAG_NAME || core.getInput('flag-name');
 
     const event = fs.readFileSync(process.env.GITHUB_EVENT_PATH!, 'utf8');
 
@@ -34,30 +35,23 @@ export async function run() {
       console.log(event);
     }
 
-    const sha = process.env.GITHUB_SHA!.toString();
-
-    let jobId;
-
     if (process.env.GITHUB_EVENT_NAME == 'pull_request') {
-      const pr = JSON.parse(event).number;
-      process.env.CI_PULL_REQUEST = pr;
-      jobId = `${sha}-PR-${pr}`;
-    } else {
-      jobId = sha;
+      process.env.CI_PULL_REQUEST = JSON.parse(event).number;
     }
-
-    process.env.COVERALLS_SERVICE_JOB_ID = jobId
 
     const endpoint = core.getInput('coveralls-endpoint');
     if (endpoint != '') {
       process.env.COVERALLS_ENDPOINT = endpoint;
     }
 
+    const runId = process.env.GITHUB_RUN_ID;
+    process.env.COVERALLS_SERVICE_JOB_ID = runId;
+
     if(core.getInput('parallel-finished') != '') {
       const payload = {
         "repo_token": githubToken,
         "repo_name": process.env.GITHUB_REPOSITORY,
-        "payload": { "build_num": jobId, "status": "done" }
+        "payload": { "build_num": runId, "status": "done" }
       };
 
       request.post({

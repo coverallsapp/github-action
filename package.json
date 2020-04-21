@@ -1,12 +1,13 @@
 {
   "name": "coveralls-action",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
   "description": "Coveralls Github Action",
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
-    "test": "mocha -r ts-node/register src/**/*.spec.ts"
+    "test": "mocha -r ts-node/register src/**/*.spec.ts",
+    "release": "git checkout -b releases && npm run build && npm prune --production && git commit -a 'prepared production release'"
   },
   "author": "Nick Merwin (nick@coveralls.io)",
   "license": "MIT",
@@ -26,9 +27,9 @@
     "typescript": "^3.5.3"
   },
   "dependencies": {
-    "@actions/core": "file:toolkit/actions-core-0.0.0.tgz",
-    "@actions/exec": "file:toolkit/actions-exec-0.0.0.tgz",
-    "coveralls": "^3.0.6",
+    "@actions/core": "^1.2.3",
+    "@actions/exec": "^1.0.3",
+    "coveralls": "^3.0.13",
     "request": "^2.88.0"
   }
 }

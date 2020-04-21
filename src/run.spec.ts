@@ -22,6 +22,10 @@ describe('Run', () => {
     getInput = sandbox.stub(core, 'getInput');
     getInput.withArgs('github-token').returns('v1.asdf');
 
+    const flagName = 'flag';
+    getInput.withArgs('flag-name').returns(flagName);
+
+    process.env.GITHUB_RUN_ID = "1234567"
     process.env.GITHUB_SHA = "asdfasdf"
     process.env.GITHUB_REF = "master"
     process.env.GITHUB_EVENT_NAME = "pull_request"
