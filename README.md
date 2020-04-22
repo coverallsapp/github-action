@@ -98,15 +98,6 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
-    - name: Use Node.js 10.x
-      uses: actions/setup-node@master
-      with:
-        version: 10.x
-
-    - name: npm install
-      run: npm install
-
     - name: Coveralls Finished
       uses: coverallsapp/github-action@master
       with:
