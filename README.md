@@ -15,7 +15,9 @@ The action's step needs to run after your test suite has outputted an LCOV file.
 | Name                  | Requirement | Description |
 | --------------------- | ----------- | ----------- |
 | `github-token`        | _required_ | Must be in form `github-token: ${{ secrets.GITHUB_TOKEN }}`; Coveralls uses this token to verify the posted coverage data on the repo and create a new check based on the results. It is built into Github Actions and does not need to be manually specified in your secrets store. [More Info](https://help.github.com/en/actions/configuring-and-managing-workflows/authenticating-with-the-github_token)|
-| `path-to-lcov`        | _optional_ | Default: "./coverage/lcov.info". Local path to the lcov output file produced by your test suite. An error will be thrown if the file can't be found. This is the file that will be sent to the Coveralls API. |
+| `path-to-file`        | _optional_ | Default: "./coverage/lcov.info". Local path to the coverage output file produced by your test suite. An error will be thrown if the file can't be found. This is the file that will be sent to the Coveralls API. |
+| `path-to-lcov`        | _optional_ | **Deprecated, use `path-to-file`**. Default: "./coverage/lcov.info". Local path to the lcov output file produced by your test suite. An error will be thrown if the file can't be found. This is the file that will be sent to the Coveralls API. |
+| `coverage-format`     | _optional_ | The format of your coverage file. Supported values are `lcov` and `raw`. defaults to `lcov`. `raw` formatted file must already contain the coverage information in Coveralls JSON format. |
 | `flag-name`           | _optional (unique required if parallel)_ | Job flag name, e.g. "Unit", "Functional", or "Integration". Will be shown in the Coveralls UI. |
 | `parallel`            | _optional_ | Set to true for parallel (or matrix) based steps, where multiple posts to Coveralls will be performed in the check. `flag-name` needs to be set and unique, e.g. `flag-name: run-${{ matrix.test_number }}` |
 | `parallel-finished`   | _optional_ | Set to true in the last job, after the other parallel jobs steps have completed, this will send a webhook to Coveralls to set the build complete. |
@@ -106,6 +108,50 @@ jobs:
 ```
 
 The "Coveralls Finished" step needs to run after all other steps have completed; it will let Coveralls know that all jobs in the build are done and aggregate coverage calculation can be calculated and notifications sent.
+
+### Java Analysis using coveralls-maven-plugin
+
+When using the coveralls-maven-plugin, execute the `coveralls:report` Maven goal with the option `-DdryRun=true` to generate a Coveralls JSON file at `./target/coveralls.json`. The Coveralls github-action can then be configured to accept the `raw` file type and the path to the JSON file.
+
+The following example demonstrates how to test your build with both Java 8 and 11, generating and analysing with Coveralls only for Java 11.
+
+```yaml
+on: ["push", "pull_request"]
+
+name: Test Coveralls Java and Maven
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [8, 11]
+    name: Build with JDK ${{matrix.java}}
+
+    steps:
+      - uses: actions/checkout@v2
+        name: Checkout
+
+      - uses: actions/setup-java@v1.3.0
+        name: Setup JDK ${{matrix.java}}
+        with:
+          java-version: ${{matrix.java}}
+
+      - name: Maven build
+        run: mvn -B verify package --file pom.xml
+
+      - name: Generate Coveralls File
+        if: matrix.java == '11'
+        run: mvn -B coveralls:report -DdryRun=true
+
+      - name: Coveralls Analysis
+        if: matrix.java == '11'
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-file: ./target/coveralls.json
+          coverage-format: raw
+```
 
 ## Demo
 

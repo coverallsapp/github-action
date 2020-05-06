@@ -5,10 +5,18 @@ author: 'Nick Merwin (Coveralls, Inc.)'
 inputs:
   github-token:
     required: true
-  path-to-lcov:
-    description: 'Path to lcov file'
+  path-to-file:
+    description: 'Path to coverage file'
     required: true
     default: './coverage/lcov.info'
+  path-to-lcov:
+    description: 'Path to lcov file (Deprecated)'
+    required: true
+    default: './coverage/lcov.info'
+  coverage-format:
+    description: ' Format of coverage file. Acccepted values are `lcov` and `raw`. Defaults to `lcov`'
+    required: true
+    default: 'lcov'
   flag-name:
     description: 'Job flag name, e.g. "Unit", "Functional", or "Integration". Will be shown in the Coveralls UI.'
     required: false
