@@ -10,7 +10,7 @@ inputs:
     required: true
     default: './coverage/lcov.info'
   parallel:
-    description: 'Set to true if you are running parallel jobs, then use "parallel_finished: true" for the last action.'
+    description: 'Set to true if you are running parallel jobs, then use "parallel-finished: true" for the last action.'
     required: false
   parallel-finished:
     description: 'Set to true for the last action when using "parallel: true".'
