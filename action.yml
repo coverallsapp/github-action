@@ -22,6 +22,9 @@ inputs:
   base-path:
     description: 'The root folder of the project that originally ran the tests'
     required: false
+  flag-name:
+    description: 'Job flag name to show in the Coveralls UI, must be unique when parallel'
+    required: false
 outputs:
   coveralls-api-result:
     description: 'Result status of Coveralls API post.'
