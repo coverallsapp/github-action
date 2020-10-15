@@ -14,7 +14,7 @@ The action's step needs to run after your test suite has outputted an LCOV file.
 
 | Name                  | Requirement | Description |
 | --------------------- | ----------- | ----------- |
-| `github-token`        | _optional_ | Must be in form `github-token: ${{ secrets.GITHUB_TOKEN }}`; Coveralls uses this token to verify the posted coverage data on the repo and create a new check based on the results. It is built into Github Actions and does not need to be manually specified in your secrets store. [More Info](https://help.github.com/en/actions/configuring-and-managing-workflows/authenticating-with-the-github_token)|
+| `github-token`        | _optional_ | Default: "${{ secrets.github_token }}", Coveralls uses this token to verify the posted coverage data on the repo and create a new check based on the results. It is built into Github Actions and does not need to be manually specified in your secrets store. [More Info](https://help.github.com/en/actions/configuring-and-managing-workflows/authenticating-with-the-github_token)|
 | `path-to-lcov`        | _optional_ | Default: "./coverage/lcov.info". Local path to the lcov output file produced by your test suite. An error will be thrown if the file can't be found. This is the file that will be sent to the Coveralls API. |
 | `flag-name`           | _optional (unique required if parallel)_ | Job flag name, e.g. "Unit", "Functional", or "Integration". Will be shown in the Coveralls UI. |
 | `parallel`            | _optional_ | Set to true for parallel (or matrix) based steps, where multiple posts to Coveralls will be performed in the check. `flag-name` needs to be set and unique, e.g. `flag-name: run-${{ matrix.test_number }}` |
