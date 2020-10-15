@@ -4,7 +4,9 @@ description: 'Send test coverage data to Coveralls.io for analysis, change track
 author: 'Nick Merwin (Coveralls, Inc.)'
 inputs:
   github-token:
+    description: The token used for authentication. Usually, this should be your `secrets.GITHUB_TOKEN`
     required: true
+    default: ${{ github.token }}
   path-to-lcov:
     description: 'Path to lcov file'
     required: true
