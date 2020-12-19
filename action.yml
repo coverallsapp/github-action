@@ -25,6 +25,9 @@ inputs:
   base-path:
     description: 'The root folder of the project that originally ran the tests'
     required: false
+  verbose:
+    description: 'Enter debug logging mode'
+    required: false
 outputs:
   coveralls-api-result:
     description: 'Result status of Coveralls API post.'
