@@ -10,20 +10,28 @@ import 'mocha';
 
 const sinon = require('sinon');
 const sandbox = sinon.createSandbox();
-let getInput: any;
+
 
 describe('Run', () => {
+
+  let getInputStub: any,
+      coverallsHandleInputStub: any;
 
   afterEach(() => {
     sandbox.restore();
   });
 
   const setup = () => {
-    getInput = sandbox.stub(core, 'getInput');
-    getInput.withArgs('github-token').returns('v1.asdf');
+    getInputStub = sandbox.stub(core, 'getInput');
+    getInputStub.withArgs('github-token').returns('v1.asdf');
 
     const flagName = 'flag';
-    getInput.withArgs('flag-name').returns(flagName);
+    getInputStub.withArgs('flag-name').returns(flagName);
+
+    const lcovPath = './coverage/lcov.info'
+    getInputStub.withArgs('path-to-lcov').returns(lcovPath);
+
+    getInputStub.withArgs('parallel').returns(1)
 
     process.env.GITHUB_RUN_ID = "1234567"
     process.env.GITHUB_SHA = "asdfasdf"
@@ -40,40 +48,80 @@ describe('Run', () => {
     )
 
     // stub Coveralls parsing lcov file:
-    sandbox.stub(coveralls, 'handleInput').returns(true);
-
-    const lcovPath = './coverage/lcov.info'
-    getInput.withArgs('path-to-lcov').returns(lcovPath);
-
-    getInput.withArgs('parallel').returns(1)
+    coverallsHandleInputStub = sandbox.stub(coveralls, 'handleInput').returns(true);
   }
 
-  it('should run parallel', () => {
+  it('should set github output after a successful handleInput', async () => {
+    const data = 'success';
     setup();
 
-    getInput.withArgs('parallel-finished').returns('');
+    getInputStub.withArgs('parallel-finished').returns('');
 
-    run().then(
-      (result) => {
-        expect(result).to.equal(0);
-        // TODO: expect core.setOutput('coveralls-api-result', body)
-      }
-    );
+    const setOutputStub = sandbox.stub(core, 'setOutput');
+    coverallsHandleInputStub.callsFake(function(filePath: any, cb: any) {
+      cb(null, data);
+    });
+
+    const result = await run();
+    expect(result).to.equal(0);
+    sinon.assert.calledOnce(setOutputStub);
+    sinon.assert.calledWith(setOutputStub, 'coveralls-api-result', data);
   });
 
-  it('should run parallel finished', () => {
+  it('should set github output if parallel finished webhook returned successfuly', async () => {
     setup();
 
-    getInput.withArgs('parallel-finished').returns(1);
-    getInput.withArgs('coveralls-endpoint').returns('https://coveralls.io');
+    const data = {
+      done: true
+    };
+    getInputStub.withArgs('parallel-finished').returns(1);
+    getInputStub.withArgs('coveralls-endpoint').returns('https://coveralls.io');
 
-    sandbox.stub(request, 'post');
+    const setOutputStub = sandbox.stub(core, 'setOutput');
+    sandbox.stub(request, 'post').callsFake(function(postCfg: any, cb: any) {
+      cb(null, {}, data);
+    });
 
-    run().then(
-      (result) => {
-        expect(result).to.equal(0);
-      }
-    );
+    const result = await run();
+    expect(result).to.equal(0);
+    sinon.assert.calledOnce(setOutputStub);
+    sinon.assert.calledWith(setOutputStub, 'coveralls-api-result', JSON.stringify(data));
   });
 
+  it(`should throw an error if parallel finished webhook returned an error`, async function () {
+    setup();
+
+    const data = {
+      done: true
+    };
+    getInputStub.withArgs('parallel-finished').returns(1);
+    getInputStub.withArgs('coveralls-endpoint').returns('https://coveralls.io');
+
+    sandbox.stub(request, 'post').callsFake(function(postCfg: any, cb: any) {
+      cb('error', {}, data);
+    });
+
+    const result = await run();
+    expect(result).to.not.equal(0);
+  });
+
+  it(`should setFailed if no token is given`, async function () {
+    setup();
+    getInputStub.withArgs('github-token').returns('');
+    const setFailedStub = sinon.stub(core, 'setFailed');
+    const errorMessage = `'github-token' input missing, please include it in your workflow settings 'with' section as 'github-token: \${{ secrets.github_token }}'`;
+
+    const result = await run();
+
+    sinon.assert.calledOnce(setFailedStub);
+    sinon.assert.calledWith(setFailedStub, errorMessage);
+  });
+
+  it(`should set verbose logging when with verbose true`, async function () {
+    setup();
+    getInputStub.withArgs('verbose').returns(true);
+    getInputStub.withArgs('parallel-finished').returns('');
+    await run();
+    expect(coveralls.logger().level).to.equal('debug');
+  });
 });
