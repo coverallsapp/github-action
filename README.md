@@ -107,6 +107,13 @@ jobs:
 
 The "Coveralls Finished" step needs to run after all other steps have completed; it will let Coveralls know that all jobs in the build are done and aggregate coverage calculation can be calculated and notifications sent.
 
+## Environment Variables
+
+
+| Name                           | Description |
+| ------------------------------ | ----------- |
+| `NODE_COVERALLS_DEBUG-token`   | Set to 1 for verbose output|
+
 ## Demo
 
 ![demo](https://s3.amazonaws.com/assets.coveralls.io/Coveralls%20Github%20Action%20Demo%20-%20trimmed%20-%204.8x720.gif)
