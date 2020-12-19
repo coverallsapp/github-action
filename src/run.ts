@@ -74,7 +74,6 @@ function handleParallelFinished() {
 function handleSerialInput() {
   const pathToLcov = core.getInput('path-to-lcov');
   const verbose = core.getInput('verbose');
-  console.log('VERBOSING!!! ', verbose);
   coveralls.options.verbose = verbose;
 
   if (pathToLcov == '') {
