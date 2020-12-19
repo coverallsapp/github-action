@@ -6,7 +6,7 @@
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
-    "test": "mocha -r ts-node/register src/**/*.spec.ts",
+    "test": "mocha -r ts-node/register src/**/*.spec.ts && NODE_COVERALLS_DEBUG=1 mocha -r ts-node/register src/**/verbose.test.ts",
     "release": "git checkout -b releases && npm run build && npm prune --production && git commit -a 'prepared production release'"
   },
   "author": "Nick Merwin (nick@coveralls.io)",

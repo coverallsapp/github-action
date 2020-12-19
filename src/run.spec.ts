@@ -11,7 +11,6 @@ import 'mocha';
 const sinon = require('sinon');
 const sandbox = sinon.createSandbox();
 
-
 describe('Run', () => {
 
   let getInputStub: any,
@@ -115,13 +114,5 @@ describe('Run', () => {
 
     sinon.assert.calledOnce(setFailedStub);
     sinon.assert.calledWith(setFailedStub, errorMessage);
-  });
-
-  it(`should set verbose logging when with verbose true`, async function () {
-    setup();
-    getInputStub.withArgs('verbose').returns(true);
-    getInputStub.withArgs('parallel-finished').returns('');
-    await run();
-    expect(coveralls.logger().level).to.equal('debug');
   });
 });

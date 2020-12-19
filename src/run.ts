@@ -73,8 +73,6 @@ function handleParallelFinished() {
 
 function handleSerialInput() {
   const pathToLcov = core.getInput('path-to-lcov');
-  const verbose = core.getInput('verbose');
-  coveralls.options.verbose = verbose;
 
   if (pathToLcov == '') {
     throw new Error("No Lcov path specified.");
@@ -100,7 +98,7 @@ function handleSerialInput() {
     } else {
       core.setOutput('coveralls-api-result', body);
     }
-  }, {verbose});
+  });
 }
 
 function setGithubToken() {
