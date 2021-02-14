@@ -86,15 +86,7 @@ export async function run() {
 
     console.log(`Using lcov file: ${pathToLcov}`);
 
-    let file;
-
-    try {
-      file = fs.readFileSync(pathToLcov, 'utf8');
-    } catch (err) {
-      throw new Error("Lcov file not found.");
-    }
-
-
+    const file = fs.readFileSync(pathToLcov, 'utf8');
     const basePath = core.getInput('base-path');
     const adjustedFile = basePath ? adjustLcovBasePath(file, basePath) : file;
 
