@@ -115,7 +115,7 @@ The "Coveralls Finished" step needs to run after all other steps have completed;
 
 1. A new function `f` without test coverage is added.
 2. The changes are committed and pushed to a new branch "function/f"
-3. The Action runs on GitHub CI.
+3. The workflow runs on GitHub Actions.
 4. The commit on GitHub shows a new check for Coveralls with details "First build on function-f at 92.0%", and links to the Job on Coveralls.
 5. Line-by-line results indicate the new function is missing coverage.
 6. Create a pull request with the new branch.
