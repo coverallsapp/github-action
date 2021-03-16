@@ -1,0 +1,26 @@
+on: ["push", "pull_request"]
+
+name: Test Coveralls
+
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v2
+
+    - name: use node.js
+      uses: actions/setup-node@v2
+
+    - name: install
+      run: npm i
+    
+    - name: test with coverage
+      run: npm run test --coverage
+
+    - name: Coveralls
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
