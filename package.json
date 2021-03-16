@@ -29,7 +29,7 @@
     "typescript": "^4.2.3"
   },
   "dependencies": {
-    "@actions/core": "^1.2.4",
+    "@actions/core": "^1.2.6",
     "@actions/exec": "^1.0.4",
     "coveralls": "^3.0.13",
     "request": "^2.88.0"
