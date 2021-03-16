@@ -7,6 +7,7 @@
   "scripts": {
     "build": "ncc --minify --source-map build src/run.ts",
     "test": "mocha -r ts-node/register src/**/*.spec.ts",
+    "test:coverage": "nyc --reporter=lcov mocha -r ts-node/register src/**/*.spec.ts",
     "release": "git checkout -b releases && npm run build && npm prune --production && git commit -a 'prepared production release'"
   },
   "author": "Nick Merwin (nick@coveralls.io)",
