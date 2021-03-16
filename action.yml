@@ -25,6 +25,9 @@ inputs:
   base-path:
     description: 'The root folder of the project that originally ran the tests'
     required: false
+  sha:
+    description: 'The commit hash the coverage will be submitted for. Defaults to GITHUB_SHA.'
+    required: false
 outputs:
   coveralls-api-result:
     description: 'Result status of Coveralls API post.'
@@ -32,5 +35,5 @@ branding:
   color: 'green'
   icon: 'percent'
 runs:
-  using: 'node12'
-  main: './lib/main.js'
+  using: 'node14'
+  main: './dist/index.js'

@@ -1,7 +1,6 @@
 import * as core from '@actions/core';
 
 import fs from 'fs';
-import path from 'path';
 import request, { Response } from 'request';
 import { adjustLcovBasePath } from './lcov-processor';
 
@@ -24,7 +23,8 @@ export async function run() {
     process.env.COVERALLS_REPO_TOKEN = githubToken;
 
     process.env.COVERALLS_SERVICE_NAME = 'github';
-    process.env.COVERALLS_GIT_COMMIT = process.env.GITHUB_SHA!.toString();
+
+    process.env.COVERALLS_GIT_COMMIT = core.getInput('sha') || process.env.GITHUB_SHA!.toString();
     process.env.COVERALLS_GIT_BRANCH = process.env.GITHUB_REF!.toString();
     process.env.COVERALLS_FLAG_NAME = process.env.COVERALLS_FLAG_NAME || core.getInput('flag-name');
 
@@ -35,7 +35,7 @@ export async function run() {
       console.log(event);
     }
 
-    if (process.env.GITHUB_EVENT_NAME == 'pull_request') {
+    if (process.env.GITHUB_EVENT_NAME == 'pull_request' || process.env.GITHUB_EVENT_NAME == 'pull_request_target') {
       process.env.CI_PULL_REQUEST = JSON.parse(event).number;
     }
 
