@@ -1,14 +1,14 @@
 # action.yml
-name: 'Coveralls GitHub Action'
-description: 'Send test coverage data to Coveralls.io for analysis, change tracking, and notifications.'
-author: 'Nick Merwin (Coveralls, Inc.)'
+name: "Coveralls GitHub Action"
+description: "Send test coverage data to Coveralls.io for analysis, change tracking, and notifications."
+author: "Nick Merwin (Coveralls, Inc.)"
 inputs:
   github-token:
     required: true
   path-to-lcov:
-    description: 'Path to lcov file'
+    description: "Path to lcov file"
     required: true
-    default: './coverage/lcov.info'
+    default: "./coverage/lcov.info"
   flag-name:
     description: 'Job flag name, e.g. "Unit", "Functional", or "Integration". Will be shown in the Coveralls UI.'
     required: false
@@ -19,18 +19,18 @@ inputs:
     description: 'Set to true for the last action when using "parallel: true".'
     required: false
   coveralls-endpoint:
-    description: 'Coveralls Enterprise server (more info: https://enterprise.coveralls.io)'
+    description: "Coveralls Enterprise server (more info: https://enterprise.coveralls.io)"
     required: false
-    default: 'https://coveralls.io'
+    default: "https://coveralls.io"
   base-path:
-    description: 'The root folder of the project that originally ran the tests'
+    description: "The root folder of the project that originally ran the tests"
     required: false
 outputs:
   coveralls-api-result:
-    description: 'Result status of Coveralls API post.'
+    description: "Result status of Coveralls API post."
 branding:
-  color: 'green'
-  icon: 'percent'
+  color: "green"
+  icon: "percent"
 runs:
-  using: 'node12'
-  main: './lib/main.js'
+  using: "node12"
+  main: "./dist/index.js"
