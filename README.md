@@ -21,6 +21,8 @@ The action's step needs to run after your test suite has outputted an LCOV file.
 | `parallel-finished`   | _optional_ | Set to true in the last job, after the other parallel jobs steps have completed, this will send a webhook to Coveralls to set the build complete. |
 | `coveralls-endpoint`  | _optional_ | Hostname and protocol: `https://<host>`; Specifies a [Coveralls Enterprise](https://enterprise.coveralls.io/) hostname. |
 | `base-path`           | _optional_ | Path to the root folder of the project the coverage was collected in. Should be used in monorepos so that coveralls can process the LCOV correctly (e.g. packages/my-project) |
+| `git-branch`          | _optional_ | Default: GITHUB_REF environment variable. Override the branch name. |
+| `git-commit`          | _optional_ | Default: GITHUB_SHA environment variable. Override the commit sha. |
 
 ### Outputs:
 

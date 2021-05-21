@@ -35,7 +35,18 @@ export async function run() {
       console.log(event);
     }
 
-    if (process.env.GITHUB_EVENT_NAME == 'pull_request') {
+    const gitCommit = core.getInput('git-commit');
+    const gitBranch = core.getInput('git-branch');
+    
+    if (gitCommit && gitCommit != '') {
+      process.env.COVERALLS_GIT_COMMIT = gitCommit;
+    }
+
+    if (gitBranch && gitBranch != '') {
+      process.env.COVERALLS_GIT_BRANCH = gitBranch;
+    }
+
+    if (process.env.GITHUB_EVENT_NAME == 'pull_request' || process.env.GITHUB_EVENT_NAME == 'pull_request_target') {
       process.env.CI_PULL_REQUEST = JSON.parse(event).number;
     }
 
