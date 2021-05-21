@@ -37,7 +37,7 @@ export async function run() {
 
     const gitCommit = core.getInput('git-commit');
     const gitBranch = core.getInput('git-branch');
-    
+
     if (gitCommit && gitCommit != '') {
       process.env.COVERALLS_GIT_COMMIT = gitCommit;
     }
@@ -49,6 +49,10 @@ export async function run() {
     if (process.env.GITHUB_EVENT_NAME == 'pull_request' || process.env.GITHUB_EVENT_NAME == 'pull_request_target') {
       process.env.CI_PULL_REQUEST = JSON.parse(event).number;
     }
+
+    console.log(`Branch: ${process.env.COVERALLS_GIT_BRANCH}`)
+    console.log(`Commit: ${process.env.COVERALLS_GIT_COMMIT}`)
+    console.log(`CI_PULL_REQUEST: ${process.env.CI_PULL_REQUEST}`)
 
     const endpoint = core.getInput('coveralls-endpoint');
     if (endpoint != '') {
