@@ -50,10 +50,6 @@ export async function run() {
       process.env.CI_PULL_REQUEST = JSON.parse(event).number;
     }
 
-    console.log(`Branch: ${process.env.COVERALLS_GIT_BRANCH}`)
-    console.log(`Commit: ${process.env.COVERALLS_GIT_COMMIT}`)
-    console.log(`CI_PULL_REQUEST: ${process.env.CI_PULL_REQUEST}`)
-
     const endpoint = core.getInput('coveralls-endpoint');
     if (endpoint != '') {
       process.env.COVERALLS_ENDPOINT = endpoint;
