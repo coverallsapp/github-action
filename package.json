@@ -1,13 +1,13 @@
 {
   "name": "coveralls-action",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "private": true,
   "description": "Coveralls Github Action",
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
     "test": "mocha -r ts-node/register src/**/*.spec.ts",
-    "release": "git checkout -b releases && npm run build && npm prune --production && git commit -a 'prepared production release'"
+    "release": "git checkout releases && git merge master && npm run build && npm prune --production && git commit -a -m 'prepared production release'"
   },
   "author": "Nick Merwin (nick@coveralls.io)",
   "license": "MIT",
