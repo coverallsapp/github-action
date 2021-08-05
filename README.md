@@ -134,6 +134,10 @@ Ensure your workflow that invokes the Coveralls action runs on pull requests, e.
 on: ["push", "pull_request"]
 ```
 
+If you did not add the repository to Coveralls first before running the Coveralls action, you also need to add yourself as the owner of the repository on Coveralls before comments and status updates can be added to your pull request:
+
+![Coveralls UI to add owner to repository](./repo_needs_owner.png)
+
 ### Coveralls responds with "cannot find matching repository"
 
 Ensure your workflow yaml line for the GitHub token matches *exactly*:
