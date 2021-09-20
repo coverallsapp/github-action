@@ -11,12 +11,15 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: SonarQube Scan
-        uses: kitabisa/sonarqube-action@v1.1.0
-        with:
-          host: ${{ secrets.SONAR_HOST_URL }}
-          login: ${{ secrets.SONAR_TOKEN }}
-
+      - name: Setup sonarqube
+        uses: warchant/setup-sonar-scanner@v3
+      - name: Run sonarqube
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: sonar-scanner
+             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+             -Dsonar.projectKey=Devops
       # If you wish to fail your job when the Quality Gate is red, uncomment the
       # following lines. This would typically be used to fail a deployment.
       # - uses: sonarsource/sonarqube-quality-gate-action@master
