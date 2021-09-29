@@ -25,6 +25,12 @@ inputs:
   base-path:
     description: 'The root folder of the project that originally ran the tests'
     required: false
+  git-branch:
+    description: 'Override the branch name'
+    required: false
+  git-commit:
+    description: 'Override the commit sha'
+    required: false
 outputs:
   coveralls-api-result:
     description: 'Result status of Coveralls API post.'
