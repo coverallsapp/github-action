@@ -7,7 +7,7 @@ inputs:
     required: true
   path-to-lcov:
     description: 'Path to lcov file'
-    required: true
+    required: false
     default: './coverage/lcov.info'
   flag-name:
     description: 'Job flag name, e.g. "Unit", "Functional", or "Integration". Will be shown in the Coveralls UI.'
