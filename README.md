@@ -137,6 +137,7 @@ on: ["push", "pull_request"]
 ```
 
 2. You have invited the [@coveralls](https://github.com/coveralls) user to your repository as a collaborator
+3. You have enabled the "LEAVE COMMENTS?" setting in the "Pull Request Alerts" area in your Repo Settings page inside the Coveralls app.
 
 ### Coveralls responds with "cannot find matching repository"
 
