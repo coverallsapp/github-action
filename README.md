@@ -128,11 +128,15 @@ The "Coveralls Finished" step needs to run after all other steps have completed;
 
 ### Coveralls comments aren't added to my pull request
 
-Ensure your workflow that invokes the Coveralls action runs on pull requests, e.g.:
+Ensure that:
+
+1. Your workflow invokes the Coveralls action runs on pull requests, e.g.:
 
 ```yaml
 on: ["push", "pull_request"]
 ```
+
+2. You have invited the [@coveralls](https://github.com/coveralls) user to your repository as a collaborator
 
 ### Coveralls responds with "cannot find matching repository"
 
