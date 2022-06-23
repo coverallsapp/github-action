@@ -1,0 +1,37 @@
+name: Build
+on:
+  pull_request:
+    
+  push:
+    branches:
+      - master # or the name of your main branch
+jobs:
+  CI:
+    name: CI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Test & publish code coverage
+        uses: paambaati/codeclimate-action@v3.0.0
+        env:
+          CC_TEST_REPORTER_ID: 51e762d3dc68ae8364eac0d1a645eb1e70e013f2d876ec39b2b875ee21a691d9
+        with:
+          coverageLocations: |
+            ${{github.workspace}}/*.lcov:lcov
+      # - name: Setup sonarqube
+      #   uses: warchant/setup-sonar-scanner@v3
+      # - name: Run sonarqube
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   run: sonar-scanner
+      #        -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+      #        -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+      #        -Dsonar.projectKey=Devops
+      # If you wish to fail your job when the Quality Gate is red, uncomment the
+      # following lines. This would typically be used to fail a deployment.
+      # - uses: sonarsource/sonarqube-quality-gate-action@master
+      #   timeout-minutes: 5
+      #   env:
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
