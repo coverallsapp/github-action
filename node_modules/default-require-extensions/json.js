@@ -7,8 +7,8 @@ module.exports = (module, filename) => {
 
 	try {
 		module.exports = JSON.parse(stripBom(content));
-	} catch (err) {
-		err.message = `${filename}: ${err.message}`;
-		throw err;
+	} catch (error) {
+		error.message = `${filename}: ${error.message}`;
+		throw error;
 	}
 };

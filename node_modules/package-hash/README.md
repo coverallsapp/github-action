@@ -75,5 +75,5 @@ Returns a hex-encoded hash string.
 
 ## Compatibility
 
-`package-hash` has been tested with Node.js 6 and above, including Windows
+`package-hash` has been tested with Node.js 8 and above, including Windows
 support.

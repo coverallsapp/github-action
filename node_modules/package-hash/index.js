@@ -1,37 +1,26 @@
 'use strict'
 
 const cp = require('child_process') // eslint-disable-line security/detect-child-process
-const fs = require('fs')
 const path = require('path')
+const {promisify} = require('util')
 
-const gfs = require('graceful-fs')
+const fs = require('graceful-fs')
 const flattenDeep = require('lodash.flattendeep')
 const hasha = require('hasha')
 const releaseZalgo = require('release-zalgo')
 
 const PACKAGE_FILE = require.resolve('./package.json')
 const TEN_MEBIBYTE = 1024 * 1024 * 10
+const execFile = promisify(cp.execFile)
 
 const readFile = {
-  async (file) {
-    return new Promise((resolve, reject) => {
-      gfs.readFile(file, (err, contents) => {
-        err ? reject(err) : resolve(contents)
-      })
-    })
-  },
-  sync (file) {
-    return fs.readFileSync(file)
-  }
+  async: promisify(fs.readFile),
+  sync: fs.readFileSync
 }
 
 const tryReadFile = {
   async (file) {
-    return new Promise(resolve => {
-      gfs.readFile(file, (err, contents) => {
-        resolve(err ? null : contents)
-      })
-    })
+    return readFile.async(file).catch(() => null)
   },
 
   sync (file) {
@@ -45,11 +34,9 @@ const tryReadFile = {
 
 const tryExecFile = {
   async (file, args, options) {
-    return new Promise(resolve => {
-      cp.execFile(file, args, options, (err, stdout) => {
-        resolve(err ? null : stdout)
-      })
-    })
+    return execFile(file, args, options)
+      .then(({stdout}) => stdout)
+      .catch(() => null)
   },
 
   sync (file, args, options) {
@@ -125,6 +112,7 @@ function computeHash (zalgo, paths, pepper, salt) {
     }
   }
 
+  // TODO: Replace flattenDeep with Array#flat(Infinity) after node.js 10 is dropped
   return zalgo.all(paths.map(pkgPath => addPackageData(zalgo, pkgPath)))
     .then(furtherInputs => hasha(flattenDeep([inputs, furtherInputs]), {algorithm: 'sha256'}))
 }

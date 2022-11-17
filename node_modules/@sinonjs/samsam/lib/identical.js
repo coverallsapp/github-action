@@ -4,15 +4,21 @@ var isNaN = require("./is-nan");
 var isNegZero = require("./is-neg-zero");
 
 /**
- * @name samsam.equal
- * @param Object obj1
- * @param Object obj2
+ * Strict equality check according to EcmaScript Harmony's `egal`.
  *
- * Returns ``true`` if two objects are strictly equal. Compared to
- * ``===`` there are two exceptions:
+ * **From the Harmony wiki:**
+ * > An `egal` function simply makes available the internal `SameValue` function
+ * > from section 9.12 of the ES5 spec. If two values are egal, then they are not
+ * > observably distinguishable.
  *
- *   - NaN is considered equal to NaN
- *   - -0 and +0 are not considered equal
+ * `identical` returns `true` when `===` is `true`, except for `-0` and
+ * `+0`, where it returns `false`. Additionally, it returns `true` when
+ * `NaN` is compared to itself.
+ *
+ * @alias module:samsam.identical
+ * @param {*} obj1 The first value to compare
+ * @param {*} obj2 The second value to compare
+ * @returns {boolean} Returns `true` when the objects are *egal*, `false` otherwise
  */
 function identical(obj1, obj2) {
     if (obj1 === obj2 || (isNaN(obj1) && isNaN(obj2))) {

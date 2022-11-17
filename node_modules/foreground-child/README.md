@@ -32,6 +32,16 @@ var child = foreground('cat', [__filename], function (done) {
 })
 ```
 
+The callback can return a Promise instead of calling `done`:
+
+```js
+var child = foreground('cat', [__filename], async function () {
+  // perform an action.
+})
+```
+
+The callback must not throw or reject.
+
 ## Caveats
 
 The "normal" standard IO file descriptors (0, 1, and 2 for stdin,

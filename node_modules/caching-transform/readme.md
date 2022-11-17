@@ -132,6 +132,18 @@ function hashData(input, metadata) {
 
 (Note that `metadata` is not taken into account otherwise.)
 
+##### filenamePrefix
+
+Type: `Function(metadata: *): string`
+
+Provide a filename to prefix the cache entry.  The return value may not contain any path separators.
+
+```js
+function filenamePrefix(metadata) {
+	return path.parse(metadata.filename || '').name + '-';
+}
+```
+
 ##### onHash
 
 Type: `Function(input: string|Buffer, metadata: *, hash: string)`

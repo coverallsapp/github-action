@@ -13,7 +13,7 @@ loaded via child processes rather than via `require()`.
 It can also be handy if you want to run your own mock executable
 instead of some other thing when child procs call into it.
 
-[![Build Status](https://travis-ci.org/tapjs/spawn-wrap.svg)](https://travis-ci.org/tapjs/spawn-wrap) [![Build status](https://ci.appveyor.com/api/projects/status/oea7gdvqa0qeijrm?svg=true)](https://ci.appveyor.com/project/isaacs/spawn-wrap)
+[![Build Status](https://travis-ci.org/istanbuljs/spawn-wrap.svg)](https://travis-ci.org/istanbuljs/spawn-wrap)
 
 ## USAGE
 

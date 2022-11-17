@@ -1,9 +1,9 @@
 "use strict";
 
-exports.isSupported = (function () {
+exports.isSupported = (function() {
     try {
-        return !!new Blob();
+        return Boolean(new Blob());
     } catch (e) {
         return false;
     }
-}());
+})();

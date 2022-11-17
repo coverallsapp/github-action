@@ -15,20 +15,26 @@ function flattenOptions(options) {
     };
 }
 function not(fn) {
-    return function () {
+    return function() {
         return !fn.apply(this, arguments);
     };
 }
 function hasListenerFilter(listener, capture) {
-    return function (listenerSpec) {
-        return listenerSpec.capture === capture
-            && listenerSpec.listener === listener;
+    return function(listenerSpec) {
+        return (
+            listenerSpec.capture === capture &&
+            listenerSpec.listener === listener
+        );
     };
 }
 
 var EventTarget = {
     // https://dom.spec.whatwg.org/#dom-eventtarget-addeventlistener
-    addEventListener: function addEventListener(event, listener, providedOptions) {
+    addEventListener: function addEventListener(
+        event,
+        listener,
+        providedOptions
+    ) {
         // 3. Let capture, passive, and once be the result of flattening more options.
         // Flatten property before executing step 2,
         // feture detection is usually based on registering handler with options object,
@@ -39,7 +45,7 @@ var EventTarget = {
         var options = flattenOptions(providedOptions);
 
         // 2. If callback is null, then return.
-        if (listener == null) {
+        if (listener === null || listener === undefined) {
             return;
         }
 
@@ -51,7 +57,11 @@ var EventTarget = {
         //    callback is callback, and capture is capture, then append
         //    a new event listener to it, whose type is type, callback is
         //    callback, capture is capture, passive is passive, and once is once.
-        if (!this.eventListeners[event].some(hasListenerFilter(listener, options.capture))) {
+        if (
+            !this.eventListeners[event].some(
+                hasListenerFilter(listener, options.capture)
+            )
+        ) {
             this.eventListeners[event].push({
                 listener: listener,
                 capture: options.capture,
@@ -61,7 +71,11 @@ var EventTarget = {
     },
 
     // https://dom.spec.whatwg.org/#dom-eventtarget-removeeventlistener
-    removeEventListener: function removeEventListener(event, listener, providedOptions) {
+    removeEventListener: function removeEventListener(
+        event,
+        listener,
+        providedOptions
+    ) {
         if (!this.eventListeners || !this.eventListeners[event]) {
             return;
         }
@@ -73,8 +87,9 @@ var EventTarget = {
         //    event listeners whose type is type, callback is callback,
         //    and capture is capture, then set that event listener’s
         //    removed to true and remove it from the associated list of event listeners.
-        this.eventListeners[event] = this.eventListeners[event]
-            .filter(not(hasListenerFilter(listener, options.capture)));
+        this.eventListeners[event] = this.eventListeners[event].filter(
+            not(hasListenerFilter(listener, options.capture))
+        );
     },
 
     dispatchEvent: function dispatchEvent(event) {
@@ -88,10 +103,10 @@ var EventTarget = {
 
         // Remove listeners, that should be dispatched once
         // before running dispatch loop to avoid nested dispatch issues
-        self.eventListeners[type] = listeners.filter(function (listenerSpec) {
+        self.eventListeners[type] = listeners.filter(function(listenerSpec) {
             return !listenerSpec.once;
         });
-        listeners.forEach(function (listenerSpec) {
+        listeners.forEach(function(listenerSpec) {
             var listener = listenerSpec.listener;
             if (typeof listener === "function") {
                 listener.call(self, event);
