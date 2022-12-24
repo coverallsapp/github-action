@@ -1,6 +1,6 @@
 import * as core from '@actions/core';
 
-import fs from 'fs';
+import { promises as fs } from "fs";
 import request, { Response } from 'request';
 import { adjustLcovBasePath } from './lcov-processor';
 
@@ -27,7 +27,7 @@ export async function run() {
     process.env.COVERALLS_GIT_BRANCH = process.env.GITHUB_REF!.toString();
     process.env.COVERALLS_FLAG_NAME = process.env.COVERALLS_FLAG_NAME || core.getInput('flag-name');
 
-    const event = fs.readFileSync(process.env.GITHUB_EVENT_PATH!, 'utf8');
+    const event = await fs.readFile(process.env.GITHUB_EVENT_PATH!, 'utf8');
 
     if (process.env.COVERALLS_DEBUG) {
       console.log("Event Name: " + process.env.GITHUB_EVENT_NAME);
@@ -96,14 +96,12 @@ export async function run() {
 
     console.log(`Using lcov file: ${pathToLcov}`);
 
-    let file;
-
+    let file = "";
     try {
-      file = fs.readFileSync(pathToLcov, 'utf8');
-    } catch (err) {
+      file = await fs.readFile(pathToLcov, 'utf8');
+    } catch (error) {
       throw new Error("Lcov file not found.");
     }
-
 
     const basePath = core.getInput('base-path');
     const adjustedFile = basePath ? adjustLcovBasePath(file, basePath) : file;
