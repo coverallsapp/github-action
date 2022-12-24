@@ -1,7 +1,6 @@
 import * as core from '@actions/core';
 
 import fs from 'fs';
-import path from 'path';
 import request, { Response } from 'request';
 import { adjustLcovBasePath } from './lcov-processor';
 
