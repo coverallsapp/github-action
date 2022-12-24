@@ -1,3 +1,5 @@
 .DS_Store
 .idea
 coverage
+# Dependency directory
+node_modules/
