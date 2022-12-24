@@ -6,12 +6,14 @@
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
+    "package": "ncc build --source-map --license licenses.txt && cp LICENSE.md dist",
     "test": "mocha -r ts-node/register src/**/*.spec.ts",
-    "release": "git checkout releases && git merge master && npm run build && npm prune --production && git commit -a -m 'prepared production release'"
+    "release": "git checkout releases && git merge master && npm run build && npm run package && git add dist && git commit -a -m 'prepared production release'"
   },
   "author": "Nick Merwin (nick@coveralls.io)",
   "license": "MIT",
   "devDependencies": {
+    "@vercel/ncc": "^0.36.0",
     "@types/chai": "^4.1.7",
     "@types/dedent": "^0.7.0",
     "@types/mocha": "^10.0.0",
