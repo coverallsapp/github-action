@@ -38,5 +38,5 @@ branding:
   color: 'green'
   icon: 'percent'
 runs:
-  using: 'node12'
-  main: './lib/main.js'
+  using: 'node16'
+  main: './dist/index.js'
