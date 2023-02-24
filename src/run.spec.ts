@@ -65,6 +65,7 @@ describe('Run', () => {
     setup();
 
     getInput.withArgs('parallel-finished').returns(1);
+    getInput.withArgs('carryforward').returns('job1,job2');
     getInput.withArgs('coveralls-endpoint').returns('https://coveralls.io');
 
     sandbox.stub(request, 'post');

@@ -58,13 +58,19 @@ export async function run() {
     const runId = process.env.GITHUB_RUN_ID;
     process.env.COVERALLS_SERVICE_JOB_ID = runId;
 
+    const carryforward = core.getInput('carryforward');
+    if (carryforward != '') {
+      process.env.COVERALLS_CARRYFORWARD_FLAGS = carryforward;
+    }
+
     if(core.getInput('parallel-finished') != '') {
       const payload = {
         "repo_token": githubToken,
+        "carryforward": process.env.COVERALLS_CARRYFORWARD_FLAGS,
         "repo_name": process.env.GITHUB_REPOSITORY,
         "payload": { "build_num": runId, "status": "done" }
       };
-
+      console.log('Sending to coveralls', payload);
       request.post({
         url: `${process.env.COVERALLS_ENDPOINT || 'https://coveralls.io'}/webhook`,
         body: payload,
