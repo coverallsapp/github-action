@@ -47,10 +47,10 @@ jobs:
 
     - uses: actions/checkout@v1
 
-    - name: Use Node.js 10.x
-      uses: actions/setup-node@v1
+    - name: Use Node.js 16.x
+      uses: actions/setup-node@v3
       with:
-        node-version: 10.x
+        node-version: 16.x
 
     - name: npm install, make test-coverage
       run: |
@@ -79,11 +79,11 @@ jobs:
           - 1
           - 2
     steps:
-    - uses: actions/checkout@master
-    - name: Use Node.js 10.x
-      uses: actions/setup-node@master
+    - uses: actions/checkout@3
+    - name: Use Node.js 16.x
+      uses: actions/setup-node@3
       with:
-        version: 10.x
+        node-version: 16.x
 
     - name: npm install
       run: npm install
@@ -99,6 +99,7 @@ jobs:
 
   finish:
     needs: test
+    if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
     - name: Coveralls Finished
@@ -106,6 +107,7 @@ jobs:
       with:
         github-token: ${{ secrets.github_token }}
         parallel-finished: true
+        carryforward: "run-1,run-2"
 ```
 
 The "Coveralls Finished" step needs to run after all other steps have completed; it will let Coveralls know that all jobs in the build are done and aggregate coverage calculation can be calculated and notifications sent.
