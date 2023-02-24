@@ -19,6 +19,7 @@ The action's step needs to run after your test suite has outputted an LCOV file.
 | `flag-name`           | _optional (unique required if parallel)_ | Job flag name, e.g. "Unit", "Functional", or "Integration". Will be shown in the Coveralls UI. |
 | `parallel`            | _optional_ | Set to true for parallel (or matrix) based steps, where multiple posts to Coveralls will be performed in the check. `flag-name` needs to be set and unique, e.g. `flag-name: run-${{ matrix.test_number }}` |
 | `parallel-finished`   | _optional_ | Set to true in the last job, after the other parallel jobs steps have completed, this will send a webhook to Coveralls to set the build complete. |
+| `carryforward`        | _optional_ | Comma separated flags used to carryforward results from previous builds if some of the parallel jobs are missing. Used only with `parallel-finished`. |
 | `coveralls-endpoint`  | _optional_ | Hostname and protocol: `https://<host>`; Specifies a [Coveralls Enterprise](https://enterprise.coveralls.io/) hostname. |
 | `base-path`           | _optional_ | Path to the root folder of the project the coverage was collected in. Should be used in monorepos so that coveralls can process the LCOV correctly (e.g. packages/my-project) |
 | `git-branch`          | _optional_ | Default: GITHUB_REF environment variable. Override the branch name. |

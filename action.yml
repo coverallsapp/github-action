@@ -18,6 +18,9 @@ inputs:
   parallel-finished:
     description: 'Set to true for the last action when using "parallel: true".'
     required: false
+  carryforward:
+    description: 'Comma separated flags used to carryforward results from previous builds if some of the parallel jobs are missing.'
+    required: false
   coveralls-endpoint:
     description: 'Coveralls Enterprise server (more info: https://enterprise.coveralls.io)'
     required: false
