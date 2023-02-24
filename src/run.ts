@@ -60,7 +60,7 @@ export async function run() {
 
     const carryforward = core.getInput('carryforward');
     if (carryforward != '') {
-      process.env.COVERALLS_CARRYFORWARD_FLAGS = carryforward
+      process.env.COVERALLS_CARRYFORWARD_FLAGS = carryforward;
     }
 
     if(core.getInput('parallel-finished') != '') {
@@ -70,7 +70,7 @@ export async function run() {
         "repo_name": process.env.GITHUB_REPOSITORY,
         "payload": { "build_num": runId, "status": "done" }
       };
-
+      console.log('Sending to coveralls', payload);
       request.post({
         url: `${process.env.COVERALLS_ENDPOINT || 'https://coveralls.io'}/webhook`,
         body: payload,
