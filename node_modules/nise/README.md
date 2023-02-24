@@ -1,4 +1,8 @@
-# nise (偽) [![npm version](https://img.shields.io/npm/v/nise.svg?style=flat)](https://www.npmjs.com/package/nise) [![Build Status](https://travis-ci.org/sinonjs/nise.svg?branch=master)](https://travis-ci.org/sinonjs/nise)
+# nise (偽)
+
+[![npm version](https://img.shields.io/npm/v/nise.svg?style=flat)](https://www.npmjs.com/package/nise)
+[![CircleCI](https://circleci.com/gh/sinonjs/nise.svg?style=svg)](https://circleci.com/gh/sinonjs/nise)
+[![codecov](https://codecov.io/gh/sinonjs/nise/branch/master/graph/badge.svg)](https://codecov.io/gh/sinonjs/nise)
 
 fake XHR and Server
 

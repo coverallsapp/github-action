@@ -19,8 +19,19 @@ var some = arrayProto.some;
 
 var hasOwnProperty = objectProto.hasOwnProperty;
 var isPrototypeOf = objectProto.isPrototypeOf;
+var objectToString = objectProto.toString;
 
 var stringIndexOf = stringProto.indexOf;
+
+var matcher = {
+    toString: function() {
+        return this.message;
+    }
+};
+
+function isMatcher(object) {
+    return isPrototypeOf(matcher, object);
+}
 
 function assertType(value, type, name) {
     var actual = typeOf(value);
@@ -44,14 +55,14 @@ function assertMethodExists(value, method, name, methodPath) {
     }
 }
 
-var matcher = {
-    toString: function() {
-        return this.message;
+function assertMatcher(value) {
+    if (!isMatcher(value)) {
+        throw new TypeError("Matcher expected");
     }
-};
+}
 
-function isMatcher(object) {
-    return isPrototypeOf(matcher, object);
+function isIterable(value) {
+    return !!value && typeOf(value.forEach) === "function";
 }
 
 function matchObject(actual, expectation) {
@@ -246,9 +257,7 @@ match.instanceOf = function(type) {
     }
     return match(function(actual) {
         return actual instanceof type;
-    }, "instanceOf(" +
-        (functionName(type) || Object.prototype.toString.call(type)) +
-        ")");
+    }, "instanceOf(" + (functionName(type) || objectToString(type)) + ")");
 };
 
 function createPropertyMatcher(propertyTest, messagePrefix) {
@@ -305,9 +314,7 @@ match.hasNested = function(property, value) {
 };
 
 match.every = function(predicate) {
-    if (!isMatcher(predicate)) {
-        throw new TypeError("Matcher expected");
-    }
+    assertMatcher(predicate);
 
     return match(function(actual) {
         if (typeOf(actual) === "object") {
@@ -317,8 +324,7 @@ match.every = function(predicate) {
         }
 
         return (
-            !!actual &&
-            typeOf(actual.forEach) === "function" &&
+            isIterable(actual) &&
             every(actual, function(element) {
                 return predicate.test(element);
             })
@@ -327,9 +333,7 @@ match.every = function(predicate) {
 };
 
 match.some = function(predicate) {
-    if (!isMatcher(predicate)) {
-        throw new TypeError("Matcher expected");
-    }
+    assertMatcher(predicate);
 
     return match(function(actual) {
         if (typeOf(actual) === "object") {
@@ -339,8 +343,7 @@ match.some = function(predicate) {
         }
 
         return (
-            !!actual &&
-            typeOf(actual.forEach) === "function" &&
+            isIterable(actual) &&
             !every(actual, function(element) {
                 return !predicate.test(element);
             })

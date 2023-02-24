@@ -1,6 +1,9 @@
 "use strict";
 
 var valueToString = require("@sinonjs/commons").valueToString;
+var className = require("@sinonjs/commons").className;
+var arrayProto = require("@sinonjs/commons").prototypes.array;
+var objectProto = require("@sinonjs/commons").prototypes.object;
 
 var getClass = require("./get-class");
 var identical = require("./identical");
@@ -12,12 +15,11 @@ var isNaN = require("./is-nan");
 var isObject = require("./is-object");
 var isSet = require("./is-set");
 var isSubset = require("./is-subset");
-var getClassName = require("./get-class-name");
 
-var every = Array.prototype.every;
+var every = arrayProto.every;
 var getTime = Date.prototype.getTime;
-var hasOwnProperty = Object.prototype.hasOwnProperty;
-var indexOf = Array.prototype.indexOf;
+var hasOwnProperty = objectProto.hasOwnProperty;
+var indexOf = arrayProto.indexOf;
 var keys = Object.keys;
 var getOwnPropertySymbols = Object.getOwnPropertySymbols;
 
@@ -114,8 +116,8 @@ function deepEqualCyclic(actual, expectation, match) {
         var expectationClass = getClass(expectationObj);
         var actualKeys = keys(actualObj);
         var expectationKeys = keys(expectationObj);
-        var actualName = getClassName(actualObj);
-        var expectationName = getClassName(expectationObj);
+        var actualName = className(actualObj);
+        var expectationName = className(expectationObj);
         var expectationSymbols =
             typeof getOwnPropertySymbols === "function"
                 ? getOwnPropertySymbols(expectationObj)
@@ -172,8 +174,8 @@ function deepEqualCyclic(actual, expectation, match) {
             return mapsDeeplyEqual;
         }
 
-        return every.call(expectationKeysAndSymbols, function(key) {
-            if (!hasOwnProperty.call(actualObj, key)) {
+        return every(expectationKeysAndSymbols, function(key) {
+            if (!hasOwnProperty(actualObj, key)) {
                 return false;
             }
 
@@ -185,10 +187,10 @@ function deepEqualCyclic(actual, expectation, match) {
             // (it's faster to check for isObject first, than to
             // get -1 from getIndex for non objects)
             var actualIndex = actualObject
-                ? indexOf.call(actualObjects, actualValue)
+                ? indexOf(actualObjects, actualValue)
                 : -1;
             var expectationIndex = expectationObject
-                ? indexOf.call(expectationObjects, expectationValue)
+                ? indexOf(expectationObjects, expectationValue)
                 : -1;
             // determines the new paths of the objects
             // - for non cyclic objects the current path will be extended

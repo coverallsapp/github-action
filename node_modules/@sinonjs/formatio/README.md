@@ -1,7 +1,7 @@
 # formatio
 
 [![Build status](https://secure.travis-ci.org/sinonjs/formatio.svg?branch=master)](http://travis-ci.org/sinonjs/formatio)
-[![Coverage Status](https://coveralls.io/repos/github/sinonjs/formatio/badge.svg?branch=master)](https://coveralls.io/github/sinonjs/formatio?branch=master)
+[![codecov](https://codecov.io/gh/sinonjs/formatio/branch/master/graph/badge.svg)](https://codecov.io/gh/sinonjs/formatio)
 
 > The cheesy object formatter
 

@@ -1,2 +1,5 @@
 #!/usr/bin/env node
-export {};
+/**
+ * Main `bin` functionality.
+ */
+export declare function main(argv: string[]): void;

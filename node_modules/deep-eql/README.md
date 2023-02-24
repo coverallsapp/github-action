@@ -1,38 +1,23 @@
 <h1 align=center>
   <a href="http://chaijs.com" title="Chai Documentation">
-    <img alt="ChaiJS" src="http://chaijs.com/img/chai-logo.png"/> deep-eql
+    <img alt="deep-eql" src="https://raw.githubusercontent.com/chaijs/deep-eql/main/deep-eql-logo.svg"/>
   </a>
 </h1>
 
 <p align=center>
-  Improved deep equality testing for [node](http://nodejs.org) and the browser.
+  Improved deep equality testing for <a href="http://nodejs.org/">node</a> and the browser.
 </p>
 
 <p align=center>
-  <a href="./LICENSE">
-    <img
-      alt="license:mit"
-      src="https://img.shields.io/badge/license-mit-green.svg?style=flat-square"
-    />
-  </a><a href="https://github.com/chaijs/deep-eql/releases">
-    <img
-      alt="tag:?"
-      src="https://img.shields.io/github/tag/chaijs/deep-eql.svg?style=flat-square"
-    />
-  </a><a href="https://travis-ci.org/chaijs/deep-eql">
+  <a href="https://github.com/chaijs/deep-eql/actions">
     <img
       alt="build:?"
-      src="https://img.shields.io/travis/chaijs/deep-eql/master.svg?style=flat-square"
+      src="https://github.com/chaijs/deep-eql/workflows/Build/badge.svg"
     />
   </a><a href="https://coveralls.io/r/chaijs/deep-eql">
     <img
       alt="coverage:?"
       src="https://img.shields.io/coveralls/chaijs/deep-eql/master.svg?style=flat-square"
-    />
-  </a><a href="https://www.npmjs.com/packages/deep-eql">
-    <img
-      alt="code quality:?"
-      src="https://img.shields.io/codacy/6de187aa62274dbea6e69a3c27e798da.svg?style=flat-square"
     />
   </a><a href="https://www.npmjs.com/packages/deep-eql">
     <img
@@ -43,18 +28,6 @@
     <img
       alt="devDependencies:?"
       src="https://img.shields.io/david/chaijs/deep-eql.svg?style=flat-square"
-    />
-  </a><a href="https://github.com/nodejs/LTS#lts-schedule1">
-    <img
-      alt="Supported Node Version: 4+"
-      src="https://img.shields.io/badge/node-4+-43853d.svg?style=flat-square"
-    />
-  </a>
-  <br/>
-  <a href="https://saucelabs.com/u/chaijs-deep-eql">
-    <img
-      alt="Selenium Test Status"
-      src="https://saucelabs.com/browser-matrix/chaijs-deep-eql.svg"
     />
   </a>
   <br>
@@ -108,9 +81,13 @@ The primary export of `deep-eql` is function that can be given two objects to co
 - All own and inherited enumerable properties are considered:
   - `eql(Object.create({ foo: { a: 1 } }), Object.create({ foo: { a: 1 } })).should.be.true;`
   - `eql(Object.create({ foo: { a: 1 } }), Object.create({ foo: { a: 2 } })).should.be.false;`
+- When comparing `Error` objects, only `name`, `message`, and `code` properties are considered, regardless of enumerability:
+  - `eql(Error('foo'), Error('foo')).should.be.true;`
+  - `eql(Error('foo'), Error('bar')).should.be.false;`
+  - `eql(Error('foo'), TypeError('foo')).should.be.false;`
+  - `eql(Object.assign(Error('foo'), { code: 42 }), Object.assign(Error('foo'), { code: 42 })).should.be.true;`
+  - `eql(Object.assign(Error('foo'), { code: 42 }), Object.assign(Error('foo'), { code: 13 })).should.be.false;`
+  - `eql(Object.assign(Error('foo'), { otherProp: 42 }), Object.assign(Error('foo'), { otherProp: 13 })).should.be.true;`
 - Arguments are not Arrays:
   - `eql([], arguments).should.be.false;`
   - `eql([], Array.prototype.slice.call(arguments)).should.be.true;`
-- Error objects are compared by reference (see https://github.com/chaijs/chai/issues/608):
-  - `eql(new Error('msg'), new Error('msg')).should.be.false;`
-  - `var err = new Error('msg'); eql(err, err).should.be.true;`
