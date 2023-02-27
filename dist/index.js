@@ -40709,7 +40709,8 @@ const path_1 = __importDefault(__nccwpck_require__(1017));
  * @param lcovFile a string containing an entire LCOV file
  * @param basePath the base path to join with the LCOV file paths
  */
-exports.adjustLcovBasePath = (lcovFile, basePath) => lcovFile.replace(/^SF:(.+)$/gm, (_, match) => `SF:${path_1.default.join(basePath, match)}`);
+const adjustLcovBasePath = (lcovFile, basePath) => lcovFile.replace(/^SF:(.+)$/gm, (_, match) => `SF:${path_1.default.join(basePath, match)}`);
+exports.adjustLcovBasePath = adjustLcovBasePath;
 
 
 /***/ }),
@@ -40721,7 +40722,11 @@ exports.adjustLcovBasePath = (lcovFile, basePath) => lcovFile.replace(/^SF:(.+)$
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -40734,7 +40739,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -40839,7 +40844,7 @@ function run() {
                 throw new Error("Lcov file not found.");
             }
             const basePath = core.getInput('base-path');
-            const adjustedFile = basePath ? lcov_processor_1.adjustLcovBasePath(file, basePath) : file;
+            const adjustedFile = basePath ? (0, lcov_processor_1.adjustLcovBasePath)(file, basePath) : file;
             coveralls.handleInput(adjustedFile, (err, body) => {
                 if (err) {
                     core.setFailed(err);
@@ -41234,7 +41239,7 @@ var exports = __webpack_exports__;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const run_1 = __nccwpck_require__(34);
-run_1.run();
+(0, run_1.run)();
 
 })();
 

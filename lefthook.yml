@@ -6,5 +6,5 @@ pre-commit:
       fail_text: Run 'npm i -g @vercel/ncc'
     test:
       files: git diff --name-only --cached --diff-filter=ACMR
-      glob: "*.{ts,js}"
+      glob: "src/*.{ts,js}"
       run: npm run test
