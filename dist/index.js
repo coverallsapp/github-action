@@ -40836,13 +40836,7 @@ function run() {
                 throw new Error("No Lcov path specified.");
             }
             console.log(`Using lcov file: ${pathToLcov}`);
-            let file;
-            try {
-                file = fs_1.default.readFileSync(pathToLcov, 'utf8');
-            }
-            catch (err) {
-                throw new Error("Lcov file not found.");
-            }
+            const file = fs_1.default.readFileSync(pathToLcov, 'utf8');
             const basePath = core.getInput('base-path');
             const adjustedFile = basePath ? (0, lcov_processor_1.adjustLcovBasePath)(file, basePath) : file;
             coveralls.handleInput(adjustedFile, (err, body) => {
