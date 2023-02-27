@@ -14,7 +14,7 @@ inputs:
     description: 'Job flag name, e.g. "Unit", "Functional", or "Integration". Will be shown in the Coveralls UI.'
     required: false
   parallel:
-    description: 'Set to true if you are running parallel jobs, then use "parallel_finished: true" for the last action.'
+    description: 'Set to true if you are running parallel jobs, then use "parallel-finished: true" for the last action.'
     required: false
   parallel-finished:
     description: 'Set to true for the last action when using "parallel: true".'
