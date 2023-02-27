@@ -19,6 +19,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install ncc
+        run: npm install -g @vercel/ncc
+
       - name: Run test
         run: npm run test
 
