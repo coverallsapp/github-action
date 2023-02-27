@@ -1,0 +1,10 @@
+pre-commit:
+  follow: true
+  commands:
+    build:
+      run: npm run build && git add dist/*
+      fail_text: Run 'npm i -g @vercel/ncc'
+    test:
+      files: git diff --name-only --cached --diff-filter=ACMR
+      glob: "src/*.{ts,js}"
+      run: npm run test

@@ -4,10 +4,11 @@ description: 'Send test coverage data to Coveralls.io for analysis, change track
 author: 'Nick Merwin (Coveralls, Inc.)'
 inputs:
   github-token:
+    description: 'Put secrets.GITHUB_TOKEN here'
     required: true
   path-to-lcov:
     description: 'Path to lcov file'
-    required: true
+    required: false
     default: './coverage/lcov.info'
   flag-name:
     description: 'Job flag name, e.g. "Unit", "Functional", or "Integration". Will be shown in the Coveralls UI.'
@@ -42,4 +43,4 @@ branding:
   icon: 'percent'
 runs:
   using: 'node16'
-  main: './lib/main.js'
+  main: './dist/index.js'
