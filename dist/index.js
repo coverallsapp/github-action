@@ -40794,7 +40794,7 @@ function run() {
             if (endpoint != '') {
                 process.env.COVERALLS_ENDPOINT = endpoint;
             }
-            const runId = process.env.GITHUB_RUN_ID;
+            const runId = process.env.COVERALLS_SERVICE_JOB_ID ? process.env.COVERALLS_SERVICE_JOB_ID : process.env.GITHUB_RUN_ID;
             process.env.COVERALLS_SERVICE_JOB_ID = runId;
             const carryforward = core.getInput('carryforward');
             if (carryforward != '') {
