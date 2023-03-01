@@ -36,6 +36,10 @@ inputs:
   git-commit:
     description: 'Override the commit sha'
     required: false
+  debug:
+    description: 'Enable debug output'
+    required: false
+    default: false
 outputs:
   coveralls-api-result:
     description: 'Result status of Coveralls API post.'
@@ -50,9 +54,11 @@ runs:
     - run: coveralls.sh call
       shell: bash
       env:
+        COVERALLS__DEBUG: ${{ input.debug }}
         COVERALLS__DONE: ${{ input.parallel-finished }}
         COVERALLS__BASE_PATH: ${{ input.base-path }}
         COVERALLS__FILE: ${{ input.path-to-lcov }}
+        COVERALLS_CARRYFORWARD_FLAGS: ${{ input.carryforward }}
         COVERALLS_FLAG_NAME: ${{ input.flag-name }}
         COVERALLS_PARALLEL: ${{ input.parallel }}
         COVERALLS_ENDPOINT: ${{ input.coveralls-endpoint }}
