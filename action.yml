@@ -10,7 +10,6 @@ inputs:
   path-to-lcov:
     description: 'Path to lcov file'
     required: false
-    default: './coverage/lcov.info'
   flag-name:
     description: 'Job flag name, e.g. "Unit", "Functional", or "Integration". Will be shown in the Coveralls UI.'
     required: false
@@ -49,13 +48,36 @@ branding:
 runs:
   using: 'composite'
   steps:
-    - run: coveralls.sh
-      shell: bash
+    - name: Install coveralls reporter (macOS)
+      if: runner.os == 'macOS'
+      run: |
+        brew tap coverallsapp/coveralls
+        brew install coveralls
+    - name: Install coveralls reporter (Linux)
+      if: runner.os == 'Linux'
+      run: curl -L https://coveralls.io/coveralls-linux.tar.gz | tar xz -C /usr/local/bin
+
+    - name: Finish report
+      if: inputs.parallel-finished == true
+      run: coveralls --done
       env:
-        COVERALLS__DEBUG: ${{ inputs.debug }}
-        COVERALLS__DONE: ${{ inputs.parallel-finished }}
-        COVERALLS__BASE_PATH: ${{ inputs.base-path }}
-        COVERALLS__FILE: ${{ inputs.path-to-lcov }}
+        COVERALLS_DEBUG: ${{ inputs.debug }}
+        COVERALLS_CARRYFORWARD_FLAGS: ${{ inputs.carryforward }}
+        COVERALLS_FLAG_NAME: ${{ inputs.flag-name }}
+        COVERALLS_PARALLEL: ${{ inputs.parallel }}
+        COVERALLS_ENDPOINT: ${{ inputs.coveralls-endpoint }}
+        COVERALLS_GIT_BRANCH: ${{ inputs.git-branch }}
+        COVERALLS_GIT_COMMIT: ${{ inputs.git-commit }}
+        COVERALLS_REPO_TOKEN: ${{ inputs.github-token }}
+
+    - name: Report
+      if: input.parallel-finished != true
+      run: >
+        coveralls ${{ inputs.debug && '--debug' }}
+                  ${{ inputs.base-path && format('--base-path {0}', inputs.base-path) }}
+                  ${{ inputs.file && format('--file {0}', inputs.file) }}
+      env:
+        COVERALLS_DEBUG: ${{ inputs.debug }}
         COVERALLS_CARRYFORWARD_FLAGS: ${{ inputs.carryforward }}
         COVERALLS_FLAG_NAME: ${{ inputs.flag-name }}
         COVERALLS_PARALLEL: ${{ inputs.parallel }}
