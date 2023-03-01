@@ -60,7 +60,7 @@ runs:
       run: curl -L https://coveralls.io/coveralls-linux.tar.gz | tar xz -C /usr/local/bin
 
     - name: Finish report
-      if: inputs.parallel-finished == true
+      if: inputs.parallel-finished == 'true'
       shell: bash
       run: coveralls --done
       env:
@@ -74,7 +74,7 @@ runs:
         COVERALLS_REPO_TOKEN: ${{ inputs.github-token }}
 
     - name: Report
-      if: inputs.parallel-finished != true
+      if: inputs.parallel-finished != 'true'
       shell: bash
       run: >
         coveralls ${{ inputs.debug && '--debug' }}
