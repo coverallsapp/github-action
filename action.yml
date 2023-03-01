@@ -8,7 +8,10 @@ inputs:
     required: false
     default: ${{ github.token }}
   path-to-lcov:
-    description: 'Path to lcov file'
+    description: 'Path to lcov file [DEPRECATED]'
+    required: false
+  file:
+    description: 'Coverage file'
     required: false
   flag-name:
     description: 'Job flag name, e.g. "Unit", "Functional", or "Integration". Will be shown in the Coveralls UI.'
@@ -79,7 +82,7 @@ runs:
       run: >
         coveralls ${{ inputs.debug == 'true' && '--debug' }}
                   ${{ inputs.base-path && format('--base-path {0}', inputs.base-path) }}
-                  ${{ inputs.file && format('--file {0}', inputs.file) }}
+                  ${{ (inputs.file || inputs.path-to-lcov ) && format('--file {0}', inputs.file || inputs.path-to-lcov) }}
       env:
         COVERALLS_DEBUG: ${{ inputs.debug }}
         COVERALLS_CARRYFORWARD_FLAGS: ${{ inputs.carryforward }}
