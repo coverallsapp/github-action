@@ -5,7 +5,6 @@ author: 'Nick Merwin (Coveralls, Inc.)'
 inputs:
   github-token:
     description: 'Put secrets.GITHUB_TOKEN here'
-    required: true
     default: ${{ github.token }}
   path-to-lcov:
     description: 'Path to lcov file'
