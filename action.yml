@@ -49,9 +49,7 @@ branding:
 runs:
   using: 'composite'
   steps:
-    - run: ./coveralls.sh download
-      shell: bash
-    - run: ./coveralls.sh call
+    - run: coveralls.sh
       shell: bash
       env:
         COVERALLS__DEBUG: ${{ inputs.debug }}
