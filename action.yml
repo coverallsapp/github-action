@@ -57,15 +57,24 @@ runs:
       run: |
         brew tap coverallsapp/coveralls --quiet
         brew install coveralls --quiet
+
     - name: Install coveralls reporter (Linux)
       if: runner.os == 'Linux'
       shell: bash
       run: curl -sL https://coveralls.io/coveralls-linux.tar.gz | tar xz -C /usr/local/bin
 
-    - name: Finish report
+    - name: Install coveralls reporter (Windows)
+      if: startsWith(runner.os, 'Windows')
+      shell: bash
+      run: |
+        mkdir -p ~/bin/
+        curl -sL https://github.com/mrexox/coverage-reporter/releases/download/v0.1.11/coveralls-windows.zip | zcat > ~/bin/coveralls.exe
+        echo ~/bin >> $GITHUB_PATH
+
+    - name: Done report
       if: inputs.parallel-finished == 'true'
       shell: bash
-      run: coveralls --done ${{ inputs.debug == 'true' && '--debug' }}
+      run: coveralls --done ${{ inputs.debug == 'true' && '--debug' || '' }}
       env:
         COVERALLS_DEBUG: ${{ inputs.debug }}
         COVERALLS_CARRYFORWARD_FLAGS: ${{ inputs.carryforward }}
@@ -76,7 +85,7 @@ runs:
         COVERALLS_GIT_COMMIT: ${{ inputs.git-commit }}
         COVERALLS_REPO_TOKEN: ${{ inputs.github-token }}
 
-    - name: Report
+    - name: Coverage report
       if: inputs.parallel-finished != 'true'
       shell: bash
       run: >-
