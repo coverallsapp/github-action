@@ -57,7 +57,7 @@ runs:
     - name: Install coveralls reporter (Linux)
       if: runner.os == 'Linux'
       shell: bash
-      run: curl -L https://coveralls.io/coveralls-linux.tar.gz | tar xz -C /usr/local/bin
+      run: curl -sL https://coveralls.io/coveralls-linux.tar.gz | tar xz -C /usr/local/bin
 
     - name: Finish report
       if: inputs.parallel-finished == 'true'
