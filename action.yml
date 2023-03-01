@@ -79,10 +79,11 @@ runs:
     - name: Report
       if: inputs.parallel-finished != 'true'
       shell: bash
-      run: >
-        coveralls ${{ inputs.debug == 'true' && '--debug' }}
-                  ${{ inputs.base-path && format('--base-path {0}', inputs.base-path) }}
-                  ${{ (inputs.file || inputs.path-to-lcov ) && format('--file {0}', inputs.file || inputs.path-to-lcov) }}
+      run: >-
+        coveralls
+        ${{ inputs.debug == 'true' && '--debug' || '' }}
+        ${{ inputs.base-path && format('--base-path {0}', inputs.base-path) || '' }}
+        ${{ (inputs.file || inputs.path-to-lcov ) && format('--file {0}', inputs.file || inputs.path-to-lcov) || '' }}
       env:
         COVERALLS_DEBUG: ${{ inputs.debug }}
         COVERALLS_CARRYFORWARD_FLAGS: ${{ inputs.carryforward }}
