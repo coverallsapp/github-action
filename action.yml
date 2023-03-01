@@ -62,7 +62,7 @@ runs:
     - name: Finish report
       if: inputs.parallel-finished == 'true'
       shell: bash
-      run: coveralls --done
+      run: coveralls --done ${{ inputs.debug && '--debug' }}
       env:
         COVERALLS_DEBUG: ${{ inputs.debug }}
         COVERALLS_CARRYFORWARD_FLAGS: ${{ inputs.carryforward }}
