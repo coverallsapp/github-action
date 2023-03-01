@@ -55,8 +55,8 @@ runs:
       if: runner.os == 'macOS'
       shell: bash
       run: |
-        brew tap coverallsapp/coveralls
-        brew install coveralls
+        brew tap coverallsapp/coveralls --quiet
+        brew install coveralls --quiet
     - name: Install coveralls reporter (Linux)
       if: runner.os == 'Linux'
       shell: bash
@@ -83,7 +83,7 @@ runs:
         coveralls
         ${{ inputs.debug == 'true' && '--debug' || '' }}
         ${{ inputs.base-path && format('--base-path {0}', inputs.base-path) || '' }}
-        ${{ (inputs.file || inputs.path-to-lcov ) && format('--file {0}', inputs.file || inputs.path-to-lcov) || '' }}
+        ${{ (inputs.file || inputs.path-to-lcov) && format('--file {0}', inputs.file || inputs.path-to-lcov) || '' }}
       env:
         COVERALLS_DEBUG: ${{ inputs.debug }}
         COVERALLS_CARRYFORWARD_FLAGS: ${{ inputs.carryforward }}
