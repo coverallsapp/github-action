@@ -8,9 +8,11 @@ inputs:
     required: false
     default: ${{ github.token }}
   path-to-lcov:
-    description: 'Path to lcov file'
+    description: 'Path to lcov file [DEPRECATED]'
     required: false
-    default: './coverage/lcov.info'
+  file:
+    description: 'Coverage file'
+    required: false
   flag-name:
     description: 'Job flag name, e.g. "Unit", "Functional", or "Integration". Will be shown in the Coveralls UI.'
     required: false
@@ -36,6 +38,10 @@ inputs:
   git-commit:
     description: 'Override the commit sha'
     required: false
+  debug:
+    description: 'Enable debug output'
+    required: false
+    default: false
 outputs:
   coveralls-api-result:
     description: 'Result status of Coveralls API post.'
@@ -43,5 +49,56 @@ branding:
   color: 'green'
   icon: 'percent'
 runs:
-  using: 'node16'
-  main: './dist/index.js'
+  using: 'composite'
+  steps:
+    - name: Install coveralls reporter (macOS)
+      if: runner.os == 'macOS'
+      shell: bash
+      run: |
+        brew tap coverallsapp/coveralls --quiet
+        brew install coveralls --quiet
+
+    - name: Install coveralls reporter (Linux)
+      if: runner.os == 'Linux'
+      shell: bash
+      run: curl -sL https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-linux.tar.gz | tar xz -C /usr/local/bin
+
+    - name: Install coveralls reporter (Windows)
+      if: startsWith(runner.os, 'Windows')
+      shell: bash
+      run: |
+        mkdir -p ~/bin/
+        curl -sL https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-windows.zip | zcat > ~/bin/coveralls.exe
+        echo ~/bin >> $GITHUB_PATH
+
+    - name: Done report
+      if: inputs.parallel-finished == 'true'
+      shell: bash
+      run: coveralls --done ${{ inputs.debug == 'true' && '--debug' || '' }}
+      env:
+        COVERALLS_DEBUG: ${{ inputs.debug }}
+        COVERALLS_CARRYFORWARD_FLAGS: ${{ inputs.carryforward }}
+        COVERALLS_FLAG_NAME: ${{ inputs.flag-name }}
+        COVERALLS_PARALLEL: ${{ inputs.parallel }}
+        COVERALLS_ENDPOINT: ${{ inputs.coveralls-endpoint }}
+        COVERALLS_GIT_BRANCH: ${{ inputs.git-branch }}
+        COVERALLS_GIT_COMMIT: ${{ inputs.git-commit }}
+        COVERALLS_REPO_TOKEN: ${{ inputs.github-token }}
+
+    - name: Coverage report
+      if: inputs.parallel-finished != 'true'
+      shell: bash
+      run: >-
+        coveralls
+        ${{ inputs.debug == 'true' && '--debug' || '' }}
+        ${{ inputs.base-path && format('--base-path {0}', inputs.base-path) || '' }}
+        ${{ (inputs.file || inputs.path-to-lcov) && format('--file {0}', inputs.file || inputs.path-to-lcov) || '' }}
+      env:
+        COVERALLS_DEBUG: ${{ inputs.debug }}
+        COVERALLS_CARRYFORWARD_FLAGS: ${{ inputs.carryforward }}
+        COVERALLS_FLAG_NAME: ${{ inputs.flag-name }}
+        COVERALLS_PARALLEL: ${{ inputs.parallel }}
+        COVERALLS_ENDPOINT: ${{ inputs.coveralls-endpoint }}
+        COVERALLS_GIT_BRANCH: ${{ inputs.git-branch }}
+        COVERALLS_GIT_COMMIT: ${{ inputs.git-commit }}
+        COVERALLS_REPO_TOKEN: ${{ inputs.github-token }}
