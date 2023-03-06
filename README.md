@@ -15,7 +15,7 @@ The action's step needs to run after your test suite has outputted an LCOV file.
 | Name                  | Requirement | Description |
 | --------------------- | ----------- | ----------- |
 | `github-token`        | _optional_ | Default: `${{ github.token }}`. Can be also used this way: `github-token: ${{ secrets.GITHUB_TOKEN }}`; Coveralls uses this token to verify the posted coverage data on the repo and create a new check based on the results. It is built into Github Actions and does not need to be manually specified in your secrets store. [More Info](https://help.github.com/en/actions/configuring-and-managing-workflows/authenticating-with-the-github_token)|
-| `path-to-lcov`        | _optional_ | Default: "./coverage/lcov.info". Local path to the lcov output file produced by your test suite. An error will be thrown if the file can't be found. This is the file that will be sent to the Coveralls API. |
+| `file`        | _optional_ | Default: all coverage files that could be found. Local path to the coverage report file produced by your test suite. An error will be thrown if no file was found. This is the file that will be sent to the Coveralls API. Leave empty if you want to combine many files reports. |
 | `flag-name`           | _optional (unique required if parallel)_ | Job flag name, e.g. "Unit", "Functional", or "Integration". Will be shown in the Coveralls UI. |
 | `parallel`            | _optional_ | Set to true for parallel (or matrix) based steps, where multiple posts to Coveralls will be performed in the check. `flag-name` needs to be set and unique, e.g. `flag-name: run ${{ join(matrix.*, ' - ') }}` |
 | `parallel-finished`   | _optional_ | Set to true in the last job, after the other parallel jobs steps have completed, this will send a webhook to Coveralls to set the build complete. |
@@ -58,7 +58,7 @@ jobs:
         make test-coverage
 
     - name: Coveralls
-      uses: coverallsapp/github-action@v1
+      uses: coverallsapp/github-action@v2
 ```
 
 ### Complete Parallel Job Example:
@@ -89,7 +89,7 @@ jobs:
     - name: Test ${{ matrix.test_number }}
       run: make test-coverage-${{ matrix.test_number }}
     - name: Coveralls Parallel
-      uses: coverallsapp/github-action@v1
+      uses: coverallsapp/github-action@v2
       with:
         flag-name: run-${{ join(matrix.*, '-') }}
         parallel: true
@@ -100,7 +100,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Coveralls Finished
-      uses: coverallsapp/github-action@v1
+      uses: coverallsapp/github-action@v2
       with:
         parallel-finished: true
         carryforward: "run-1,run-2"
