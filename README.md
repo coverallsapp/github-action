@@ -1,5 +1,11 @@
 ![logo](https://s3.amazonaws.com/assets.coveralls.io/coveralls_logotype-01.png)
 
+> The new version **`coverallsapp/github-action@v2`** is now available! :partying_face:
+>
+> It is a [pre-release](https://github.com/coverallsapp/github-action/releases/tag/v2) but will become the main supported version soon. It uses [coverage-reporter](https://github.com/coverallsapp/coverage-reporter) which has all existing features + **more coverage formats support**. You can check the list of supported formats [here](https://github.com/coverallsapp/coverage-reporter#supported-coverage-file-types).
+>
+> See [UPGRADE.md](https://github.com/coverallsapp/github-action/blob/release/v2/UPGRADE.md#v1---v2).
+
 # Coveralls GitHub Action
 
 This GitHub Action posts your test suite's LCOV coverage data to [coveralls.io](https://coveralls.io/) for analysis, change tracking, and notifications. You don't need to add the repo to Coveralls first, it will be created when receiving the post.
