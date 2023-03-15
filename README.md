@@ -24,6 +24,8 @@ The action's step needs to run after your test suite has outputted an LCOV file.
 | `base-path`           | _optional_ | Path to the root folder of the project the coverage was collected in. Should be used in monorepos so that coveralls can process the LCOV correctly (e.g. packages/my-project) |
 | `git-branch`          | _optional_ | Default: GITHUB_REF environment variable. Override the branch name. |
 | `git-commit`          | _optional_ | Default: GITHUB_SHA environment variable. Override the commit SHA. |
+| `compare-ref`         | _optional_ | Branch name to compare coverage with. Specify if you want to always check coverage change for PRs against one branch. |
+| `compare-sha`         | _optional_ | Commit SHA to compare coverage with. |
 
 ### Outputs:
 
