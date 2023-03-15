@@ -38,6 +38,12 @@ inputs:
   git-commit:
     description: 'Override the commit sha'
     required: false
+  compare-ref:
+    description: 'Branch name to use as the base for coverage results'
+    required: false
+  compare-sha:
+    description: 'Commit SHA to use as the base for coverage results'
+    required: false
   debug:
     description: 'Enable debug output'
     required: false
@@ -102,3 +108,5 @@ runs:
         COVERALLS_GIT_BRANCH: ${{ inputs.git-branch }}
         COVERALLS_GIT_COMMIT: ${{ inputs.git-commit }}
         COVERALLS_REPO_TOKEN: ${{ inputs.github-token }}
+        COVERALLS_COMPARE_REF: ${{ inputs.compare-ref }}
+        COVERALLS_COMPARE_SHA: ${{ inputs.compare-sha }}
