@@ -2,7 +2,7 @@
 
 > The new version **`coverallsapp/github-action@v2`** is now available! :partying_face:
 >
-> It is a [pre-release](https://github.com/coverallsapp/github-action/releases/tag/v2) but will become the main supported version soon. It uses [coverage-reporter](https://github.com/coverallsapp/coverage-reporter) which has all existing features + **more coverage formats support**. You can check the list of supported formats [here](https://github.com/coverallsapp/coverage-reporter#supported-coverage-file-types).
+> It is a [pre-release](https://github.com/coverallsapp/github-action/releases/tag/v2) but will become the main supported version soon. It uses [coverage-reporter](https://github.com/coverallsapp/coverage-reporter) which supports all existing features + **more coverage formats support**. You can check the list of supported formats [here](https://github.com/coverallsapp/coverage-reporter#supported-coverage-report-formats).
 >
 > See [UPGRADE.md](https://github.com/coverallsapp/github-action/blob/release/v2/UPGRADE.md#v1---v2).
 
