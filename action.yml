@@ -13,6 +13,9 @@ inputs:
   file:
     description: 'Coverage file'
     required: false
+  format:
+    description: 'Force coverage format, supported formats: lcov, simplecov, cobertura, jacoco, gcov, golang, python'
+    required: false
   flag-name:
     description: 'Job flag name, e.g. "Unit", "Functional", or "Integration". Will be shown in the Coveralls UI.'
     required: false
@@ -99,6 +102,7 @@ runs:
         ${{ inputs.debug == 'true' && '--debug' || '' }}
         ${{ inputs.base-path && format('--base-path {0}', inputs.base-path) || '' }}
         ${{ (inputs.file || inputs.path-to-lcov) && format('--file {0}', inputs.file || inputs.path-to-lcov) || '' }}
+        ${{ inputs.format && format('--format {0}', inputs.format) || '' }}
       env:
         COVERALLS_DEBUG: ${{ inputs.debug }}
         COVERALLS_CARRYFORWARD_FLAGS: ${{ inputs.carryforward }}
