@@ -11,3 +11,5 @@
 - You can skip `file` option and coveralls will try to find all supported coverage files and combine their data.
 
 - If coveralls fails to determine your coverage report format, use explicit `format` option to specify it. See [supported values](https://github.com/coverallsapp/coverage-reporter#supported-coverage-report-formats).
+
+- If you see a message `Nothing to report` it might be a path resolution issue. Check filenames in the coverage report and use `base-path` option to adjust paths to the source files.
