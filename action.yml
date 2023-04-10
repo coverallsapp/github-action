@@ -32,6 +32,10 @@ inputs:
     description: 'Coveralls Enterprise server (more info: https://enterprise.coveralls.io)'
     required: false
     default: 'https://coveralls.io'
+  allow-empty:
+    description: "Don't fail when coverage report file is empty or contains no data"
+    required: false
+    default: false
   base-path:
     description: 'The root folder of the project that originally ran the tests'
     required: false
@@ -70,7 +74,10 @@ runs:
     - name: Install coveralls reporter (Linux)
       if: runner.os == 'Linux'
       shell: bash
-      run: curl -sL https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-linux.tar.gz | tar xz -C /usr/local/bin
+      run: |
+        mkdir -p ~/bin/
+        curl -sL https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-linux.tar.gz | tar xz -C ~/bin
+        echo ~/bin >> $GITHUB_PATH
 
     - name: Install coveralls reporter (Windows)
       if: startsWith(runner.os, 'Windows')
@@ -100,6 +107,7 @@ runs:
       run: >-
         coveralls
         ${{ inputs.debug == 'true' && '--debug' || '' }}
+        ${{ inputs.allow-empty == 'true' && '--allow-empty' || '' }}
         ${{ inputs.base-path && format('--base-path {0}', inputs.base-path) || '' }}
         ${{ (inputs.file || inputs.path-to-lcov) && format('--file {0}', inputs.file || inputs.path-to-lcov) || '' }}
         ${{ inputs.format && format('--format {0}', inputs.format) || '' }}
