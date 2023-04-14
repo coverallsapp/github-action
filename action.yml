@@ -76,7 +76,12 @@ runs:
       shell: bash
       run: |
         mkdir -p ~/bin/
-        curl -sL https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-linux.tar.gz | tar xz -C ~/bin
+        cd ~/bin/
+        curl -sLO https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-linux.tar.gz
+        curl -sLO https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-checksums.txt
+        cat coveralls-checksums.txt | grep coveralls-linux.tar.gz | sha256sum --check
+        tar -xzf coveralls-linux.tar.gz
+        rm coveralls-checksums.txt
         echo ~/bin >> $GITHUB_PATH
 
     - name: Install coveralls reporter (Windows)
@@ -84,7 +89,12 @@ runs:
       shell: bash
       run: |
         mkdir -p ~/bin/
-        curl -sL https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-windows.zip | zcat > ~/bin/coveralls.exe
+        cd ~/bin/
+        curl -sLO https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-windows.zip
+        curl -sLO https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-checksums.txt
+        cat coveralls-checksums.txt | grep coveralls-windows.zip | sha256sum --check
+        zcat coveralls-windows.zip > coveralls.exe
+        rm coveralls-checksums.txt
         echo ~/bin >> $GITHUB_PATH
 
     - name: Done report
