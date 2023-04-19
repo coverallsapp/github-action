@@ -132,3 +132,4 @@ runs:
         COVERALLS_REPO_TOKEN: ${{ inputs.github-token }}
         COVERALLS_COMPARE_REF: ${{ inputs.compare-ref }}
         COVERALLS_COMPARE_SHA: ${{ inputs.compare-sha }}
+        COVERALLS_SOURCE_HEADER: github-action
