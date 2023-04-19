@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v3
 
     - name: Use Node.js 16.x
       uses: actions/setup-node@v3
@@ -64,7 +64,7 @@ jobs:
         make test-coverage
 
     - name: Coveralls
-      uses: coverallsapp/github-action@v1
+      uses: coverallsapp/github-action@v2
 ```
 
 ### Complete Parallel Job Example:
@@ -95,7 +95,7 @@ jobs:
     - name: Test ${{ matrix.test_number }}
       run: make test-coverage-${{ matrix.test_number }}
     - name: Coveralls Parallel
-      uses: coverallsapp/github-action@v1
+      uses: coverallsapp/github-action@v2
       with:
         flag-name: run-${{ join(matrix.*, '-') }}
         parallel: true
@@ -106,7 +106,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Coveralls Finished
-      uses: coverallsapp/github-action@v1
+      uses: coverallsapp/github-action@v2
       with:
         parallel-finished: true
         carryforward: "run-1,run-2"
