@@ -40761,6 +40761,9 @@ const core = __importStar(__nccwpck_require__(6024));
 const fs_1 = __importDefault(__nccwpck_require__(7147));
 const request_1 = __importDefault(__nccwpck_require__(2956));
 const lcov_processor_1 = __nccwpck_require__(6334);
+process.env.NODE_COVERALLS_DEBUG = (process.env.COVERALLS_DEBUG == 'true' ||
+    process.env.COVERALLS_DEBUG == '1' ||
+    core.getInput('debug') == 'true') ? '1' : '';
 const coveralls = __nccwpck_require__(7532);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -40774,12 +40777,8 @@ function run() {
             process.env.COVERALLS_GIT_COMMIT = process.env.GITHUB_SHA.toString();
             process.env.COVERALLS_GIT_BRANCH = process.env.GITHUB_REF.toString();
             process.env.COVERALLS_FLAG_NAME = process.env.COVERALLS_FLAG_NAME || core.getInput('flag-name');
-            if (core.getInput('debug')) {
-                process.env.NODE_COVERALLS_DEBUG = '1';
-                process.env.COVERALLS_DEBUG = '1';
-            }
             const event = fs_1.default.readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8');
-            if (process.env.COVERALLS_DEBUG) {
+            if (process.env.NODE_COVERALLS_DEBUG) {
                 console.log("Event Name: " + process.env.GITHUB_EVENT_NAME);
                 console.log(event);
             }

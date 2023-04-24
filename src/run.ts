@@ -5,6 +5,12 @@ import path from 'path';
 import request, { Response } from 'request';
 import { adjustLcovBasePath } from './lcov-processor';
 
+process.env.NODE_COVERALLS_DEBUG = (
+  process.env.COVERALLS_DEBUG == 'true' ||
+    process.env.COVERALLS_DEBUG == '1' ||
+    core.getInput('debug') == 'true'
+) ? '1' : '';
+
 const coveralls = require('coveralls');
 
 interface WebhookResult {
@@ -27,14 +33,10 @@ export async function run() {
     process.env.COVERALLS_GIT_COMMIT = process.env.GITHUB_SHA!.toString();
     process.env.COVERALLS_GIT_BRANCH = process.env.GITHUB_REF!.toString();
     process.env.COVERALLS_FLAG_NAME = process.env.COVERALLS_FLAG_NAME || core.getInput('flag-name');
-    if (core.getInput('debug')) {
-      process.env.NODE_COVERALLS_DEBUG = '1'
-      process.env.COVERALLS_DEBUG = '1'
-    }
 
     const event = fs.readFileSync(process.env.GITHUB_EVENT_PATH!, 'utf8');
 
-    if (process.env.COVERALLS_DEBUG) {
+    if (process.env.NODE_COVERALLS_DEBUG) {
       console.log("Event Name: " + process.env.GITHUB_EVENT_NAME);
       console.log(event);
     }
