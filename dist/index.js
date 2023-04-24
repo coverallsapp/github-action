@@ -40774,6 +40774,10 @@ function run() {
             process.env.COVERALLS_GIT_COMMIT = process.env.GITHUB_SHA.toString();
             process.env.COVERALLS_GIT_BRANCH = process.env.GITHUB_REF.toString();
             process.env.COVERALLS_FLAG_NAME = process.env.COVERALLS_FLAG_NAME || core.getInput('flag-name');
+            if (core.getInput('debug')) {
+                process.env.NODE_COVERALLS_DEBUG = '1';
+                process.env.COVERALLS_DEBUG = '1';
+            }
             const event = fs_1.default.readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8');
             if (process.env.COVERALLS_DEBUG) {
                 console.log("Event Name: " + process.env.GITHUB_EVENT_NAME);
