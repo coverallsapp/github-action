@@ -28,6 +28,7 @@ The action's step needs to run after your test suite has outputted an LCOV file.
 | `git-commit`          | _optional_ | Default: GITHUB_SHA environment variable. Override the commit SHA. |
 | `compare-ref`         | _optional_ | Branch name to compare coverage with. Specify if you want to always check coverage change for PRs against one branch. |
 | `compare-sha`         | _optional_ | Commit SHA to compare coverage with. |
+| `debug`               | _optional_ | Default: `false`. Set to `true` to enable debug logging. |
 
 ### Outputs:
 
