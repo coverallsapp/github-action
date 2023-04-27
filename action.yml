@@ -55,6 +55,9 @@ inputs:
     description: 'Enable debug output'
     required: false
     default: false
+  reporter-version:
+    description: 'Coverage reporter version (latest by default)'
+    required: false
 outputs:
   coveralls-api-result:
     description: 'Result status of Coveralls API post.'
@@ -69,7 +72,7 @@ runs:
       shell: bash
       run: |
         brew tap coverallsapp/coveralls --quiet
-        brew install coveralls --quiet
+        brew install coveralls${{ inputs.reporter-version && format('@{0}', inputs.reporter-version) || '' }} --quiet
 
     - name: Install coveralls reporter (Linux)
       if: runner.os == 'Linux'
@@ -77,8 +80,8 @@ runs:
       run: |
         mkdir -p ~/bin/
         cd ~/bin/
-        curl -sLO https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-linux.tar.gz
-        curl -sLO https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-checksums.txt
+        curl -sLO https://github.com/coverallsapp/coverage-reporter/releases/${{ inputs.reporter-version && format('download/v{0}', inputs.reporter-version) || 'latest/download' }}/coveralls-linux.tar.gz
+        curl -sLO https://github.com/coverallsapp/coverage-reporter/releases/${{ inputs.reporter-version && format('download/v{0}', inputs.reporter-version) || 'latest/download' }}/coveralls-checksums.txt
         cat coveralls-checksums.txt | grep coveralls-linux.tar.gz | sha256sum --check
         tar -xzf coveralls-linux.tar.gz
         rm coveralls-checksums.txt
@@ -90,8 +93,8 @@ runs:
       run: |
         mkdir -p ~/bin/
         cd ~/bin/
-        curl -sLO https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-windows.zip
-        curl -sLO https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-checksums.txt
+        curl -sLO https://github.com/coverallsapp/coverage-reporter/releases/${{ inputs.reporter-version && format('download/v{0}', inputs.reporter-version) || 'latest/download' }}/coveralls-windows.zip
+        curl -sLO https://github.com/coverallsapp/coverage-reporter/releases/${{ inputs.reporter-version && format('download/v{0}', inputs.reporter-version) || 'latest/download' }}/coveralls-checksums.txt
         cat coveralls-checksums.txt | grep coveralls-windows.zip | sha256sum --check
         zcat coveralls-windows.zip > coveralls.exe
         rm coveralls-checksums.txt
