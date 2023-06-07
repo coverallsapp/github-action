@@ -100,7 +100,7 @@ runs:
     - name: Done report
       if: inputs.parallel-finished == 'true'
       shell: bash
-      run: coveralls --done ${{ inputs.debug == 'true' && '--debug' || '' }}
+      run: coveralls done ${{ inputs.debug == 'true' && '--debug' || '' }}
       env:
         COVERALLS_DEBUG: ${{ inputs.debug }}
         COVERALLS_CARRYFORWARD_FLAGS: ${{ inputs.carryforward }}
@@ -115,12 +115,12 @@ runs:
       if: inputs.parallel-finished != 'true'
       shell: bash
       run: >-
-        coveralls
+        coveralls report
         ${{ inputs.debug == 'true' && '--debug' || '' }}
         ${{ inputs.allow-empty == 'true' && '--allow-empty' || '' }}
         ${{ inputs.base-path && format('--base-path {0}', inputs.base-path) || '' }}
-        ${{ (inputs.file || inputs.path-to-lcov) && format('--file {0}', inputs.file || inputs.path-to-lcov) || '' }}
         ${{ inputs.format && format('--format {0}', inputs.format) || '' }}
+        ${{ inputs.file || inputs.path-to-lcov }}
       env:
         COVERALLS_DEBUG: ${{ inputs.debug }}
         COVERALLS_CARRYFORWARD_FLAGS: ${{ inputs.carryforward }}
