@@ -29,6 +29,7 @@ The action's step needs to run after your test suite has outputted an LCOV file.
 | `compare-ref`         | _optional_ | Branch name to compare coverage with. Specify if you want to always check coverage change for PRs against one branch. |
 | `compare-sha`         | _optional_ | Commit SHA to compare coverage with. |
 | `debug`               | _optional_ | Default: `false`. Set to `true` to enable debug logging. |
+| `measure`             | _optional_ | Default: `false`. Set to `true` to enable time measurement logging. |
 
 ### Outputs:
 
