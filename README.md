@@ -30,6 +30,7 @@ The action's step needs to run after your test suite has outputted an LCOV file.
 | `compare-sha`         | _optional_ | Commit SHA to compare coverage with. |
 | `debug`               | _optional_ | Default: `false`. Set to `true` to enable debug logging. |
 | `measure`             | _optional_ | Default: `false`. Set to `true` to enable time time measurement logging. |
+| `fail-on-error`       | _optional_ | Default: `true`. Set to `false` to avoid CI failure when upload fails due to any errors. |
 
 ### Outputs:
 
