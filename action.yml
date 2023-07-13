@@ -59,6 +59,10 @@ inputs:
     description: 'Show execution time of parsing and reporting'
     required: false
     default: false
+  fail-on-error:
+    description: 'Whether to fail (exit code 1) on any issues while uploading the coverage'
+    required: false
+    default: true
 outputs:
   coveralls-api-result:
     description: 'Result status of Coveralls API post.'
@@ -104,7 +108,11 @@ runs:
     - name: Done report
       if: inputs.parallel-finished == 'true'
       shell: bash
-      run: coveralls done ${{ inputs.debug == 'true' && '--debug' || '' }} ${{ inputs.measure == 'true' && '--measure' || '' }}
+      run: >-
+        coveralls done
+        ${{ inputs.debug == 'true' && '--debug' || '' }}
+        ${{ inputs.measure == 'true' && '--measure' || '' }}
+        ${{ inputs.fail-on-error == 'false' && '--no-fail' || '' }}
       env:
         COVERALLS_DEBUG: ${{ inputs.debug }}
         COVERALLS_CARRYFORWARD_FLAGS: ${{ inputs.carryforward }}
@@ -122,6 +130,7 @@ runs:
         coveralls report
         ${{ inputs.debug == 'true' && '--debug' || '' }}
         ${{ inputs.measure == 'true' && '--measure' || '' }}
+        ${{ inputs.fail-on-error == 'false' && '--no-fail' || '' }}
         ${{ inputs.allow-empty == 'true' && '--allow-empty' || '' }}
         ${{ inputs.base-path && format('--base-path {0}', inputs.base-path) || '' }}
         ${{ inputs.format && format('--format {0}', inputs.format) || '' }}
