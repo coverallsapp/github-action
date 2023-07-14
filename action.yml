@@ -66,6 +66,10 @@ inputs:
     description: 'Whether to fail (exit code 1) on any issues while uploading the coverage'
     required: false
     default: true
+  create-build:
+    description: 'When calling parallel-done webhook crate the build if it is missing'
+    required: false
+    default: false
 outputs:
   coveralls-api-result:
     description: 'Result status of Coveralls API post.'
@@ -116,6 +120,7 @@ runs:
         ${{ inputs.debug == 'true' && '--debug' || '' }}
         ${{ inputs.measure == 'true' && '--measure' || '' }}
         ${{ inputs.fail-on-error == 'false' && '--no-fail' || '' }}
+        ${{ inputs.create-build == 'true' && '--create-build' || '' }}
       env:
         COVERALLS_DEBUG: ${{ inputs.debug }}
         COVERALLS_CARRYFORWARD_FLAGS: ${{ inputs.carryforward }}
