@@ -97,20 +97,16 @@ runs:
 
     - name: Install coveralls reporter (Windows)
       if: startsWith(runner.os, 'Windows')
-      shell: bash
+      shell: pwsh
       run: |
-        mkdir -p ~/bin/
-        cd ~/bin/
-        curl -sLO https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-windows.zip
-        curl -sLO https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-checksums.txt
-        cat coveralls-checksums.txt | grep coveralls-windows.zip | sha256sum --check
-        zcat coveralls-windows.zip > coveralls.exe
-        rm coveralls-checksums.txt
-        echo ~/bin >> $GITHUB_PATH
+        New-Item -Path $env:HOME\bin -ItemType directory
+        Push-Location $env:HOME\bin
+        Invoke-WebRequest -Uri "https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-windows.exe" -OutFile "coveralls.exe"
+        echo $env:HOME\bin | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
     - name: Done report
       if: inputs.parallel-finished == 'true'
-      shell: bash
+      shell: ${{ startsWith(runner.os, 'Windows') ? 'pwsh' : 'bash' }}
       run: >-
         coveralls done
         ${{ inputs.debug == 'true' && '--debug' || '' }}
@@ -128,7 +124,7 @@ runs:
 
     - name: Coverage report
       if: inputs.parallel-finished != 'true'
-      shell: bash
+      shell: ${{ startsWith(runner.os, 'Windows') ? 'pwsh' : 'bash' }}
       run: >-
         coveralls report
         ${{ inputs.debug == 'true' && '--debug' || '' }}
