@@ -99,7 +99,7 @@ runs:
       if: startsWith(runner.os, 'Windows')
       shell: pwsh
       run: |
-        New-Item -Path $env:HOME\bin -ItemType directory
+        New-Item -Path $env:HOME\bin -ItemType directory -Force
         Push-Location $env:HOME\bin
         Invoke-WebRequest -Uri "https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-windows.exe" -OutFile "coveralls.exe"
         Invoke-WebRequest -Uri "https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-checksums.txt" -OutFile "sha256sums.txt"
