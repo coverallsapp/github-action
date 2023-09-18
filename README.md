@@ -2,7 +2,7 @@
 
 # Coveralls GitHub Action
 
-This GitHub Action posts your test suite's LCOV coverage data to [coveralls.io](https://coveralls.io/) for analysis, change tracking, and notifications. You don't need to add the repo to Coveralls first, it will be created when receiving the post.
+This GitHub Action posts your test suite's coverage data to [coveralls.io](https://coveralls.io/) for analysis, change tracking, and notifications. You don't need to add the repo to Coveralls first, it will be created when receiving the post.
 
 When running on `pull_request` events, a comment will be added to the PR with details about how coverage will be affected if merged.
 
