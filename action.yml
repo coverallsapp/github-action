@@ -67,7 +67,7 @@ inputs:
     required: false
     default: true
   reporter-version:
-    description: 'Specify custom version of coverage-reporter, for example: `v2.2.2`'
+    description: 'Specify custom version of coverage-reporter, for example: `v0.6.4`'
     required: false
     default: 'latest'
 outputs:
