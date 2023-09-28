@@ -76,8 +76,6 @@ outputs:
 branding:
   color: 'green'
   icon: 'percent'
-env:
-  download_url: 
 runs:
   using: 'composite'
 
