@@ -32,6 +32,7 @@ The action's step needs to run after your test suite has outputted an LCOV file.
 | `debug`               | _optional_ | Default: `false`. Set to `true` to enable debug logging. |
 | `measure`             | _optional_ | Default: `false`. Set to `true` to enable time time measurement logging. |
 | `fail-on-error`       | _optional_ | Default: `true`. Set to `false` to avoid CI failure when upload fails due to any errors. |
+| `reporter-version`    | _optional_ | Default: `latest`. Specify reporter version/release, for example: `v2.2.2` |
 
 ### Outputs:
 
