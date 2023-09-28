@@ -76,8 +76,11 @@ outputs:
 branding:
   color: 'green'
   icon: 'percent'
+env:
+  download_url: ${{ inputs.reporter-version == 'latest' && 'https://github.com/coverallsapp/coverage-reporter/releases/latest/download' || 'https://github.com/coverallsapp/coverage-reporter/releases/download/${{ inputs.reporter-version }}' }}
 runs:
   using: 'composite'
+
   steps:
     - name: Install coveralls reporter (macOS)
       if: runner.os == 'macOS'
@@ -92,8 +95,8 @@ runs:
       run: |
         mkdir -p ~/bin/
         cd ~/bin/
-        curl -sLO https://github.com/coverallsapp/coverage-reporter/releases/${{inputs.reporter-version}}/download/coveralls-linux.tar.gz
-        curl -sLO https://github.com/coverallsapp/coverage-reporter/releases/${{inputs.reporter-version}}/download/coveralls-checksums.txt
+        curl -sLO ${{env.download_url}}/coveralls-linux.tar.gz
+        curl -sLO ${{env.download_url}}/coveralls-checksums.txt
         cat coveralls-checksums.txt | grep coveralls-linux.tar.gz | sha256sum --check
         tar -xzf coveralls-linux.tar.gz
         rm coveralls-checksums.txt
@@ -105,8 +108,8 @@ runs:
       run: |
         New-Item -Path $env:HOME\bin -ItemType directory -Force
         Push-Location $env:HOME\bin
-        Invoke-WebRequest -Uri "https://github.com/coverallsapp/coverage-reporter/releases/${{inputs.reporter-version}}/download/coveralls-windows.exe" -OutFile "coveralls.exe"
-        Invoke-WebRequest -Uri "https://github.com/coverallsapp/coverage-reporter/releases/${{inputs.reporter-version}}/download/coveralls-checksums.txt" -OutFile "sha256sums.txt"
+        Invoke-WebRequest -Uri "${{env.download_url}}/coveralls-windows.exe" -OutFile "coveralls.exe"
+        Invoke-WebRequest -Uri "${{env.download_url}}/coveralls-checksums.txt" -OutFile "sha256sums.txt"
         (Get-FileHash coveralls.exe).Hash -eq (Get-Content ./sha256sums.txt | Where-Object{$_ -match 'windows.exe'} | ForEach-Object{($_ -split "\s+")[0]})
         Remove-Item *.txt -Force
         echo $env:HOME\bin | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
