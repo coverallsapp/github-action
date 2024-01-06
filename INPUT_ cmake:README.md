@@ -1,5 +1,4 @@
-![logo](https://s3.amazonaws.com/assets.coveralls.io/coveralls_logotype-01.png)
-
+![logo](https://gist.github.com/jyankhomen/a6fb2fe1f67059d62bf7e136ba0d9207)
 # Coveralls GitHub Action
 
 This GitHub Action posts your test suite's coverage data to [coveralls.io](https://coveralls.io/) for analysis, change tracking, and notifications. You don't need to add the repo to Coveralls first, it will be created when receiving the post.
