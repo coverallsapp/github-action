@@ -90,7 +90,7 @@ runs:
         cd ~/bin/
         curl -sLO https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-linux.tar.gz
         curl -sLO https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-checksums.txt
-        cat coveralls-checksums.txt | grep coveralls-linux.tar.gz | sha256sum --check
+        cat coveralls-checksums.txt | grep coveralls-linux.tar.gz | sha256sum -c
         tar -xzf coveralls-linux.tar.gz
         rm coveralls-checksums.txt
         echo ~/bin >> $GITHUB_PATH
