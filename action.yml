@@ -38,7 +38,7 @@ inputs:
   allow-empty:
     description: "Don't fail when coverage report file is empty or contains no data"
     required: false
-    default: false
+    default: 'false'
   base-path:
     description: 'The root folder of the project that originally ran the tests'
     required: false
@@ -57,18 +57,15 @@ inputs:
   debug:
     description: 'Enable debug output'
     required: false
-    default: false
+    default: 'false'
   measure:
     description: 'Show execution time of parsing and reporting'
     required: false
-    default: false
+    default: 'false'
   fail-on-error:
     description: 'Whether to fail (exit code 1) on any issues while uploading the coverage'
     required: false
-    default: true
-outputs:
-  coveralls-api-result:
-    description: 'Result status of Coveralls API post.'
+    default: 'true'
 branding:
   color: 'green'
   icon: 'percent'
