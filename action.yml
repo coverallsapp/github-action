@@ -66,6 +66,10 @@ inputs:
     description: 'Whether to fail (exit code 1) on any issues while uploading the coverage'
     required: false
     default: 'true'
+  coverage-reporter-version:
+    description: 'Version of coverage-reporter to user'
+    required: false
+    default: 'latest'
 branding:
   color: 'green'
   icon: 'percent'
