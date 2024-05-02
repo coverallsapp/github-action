@@ -83,6 +83,11 @@ runs:
         brew tap coverallsapp/coveralls --quiet
         brew install coveralls --quiet
 
+    - name: Report coverage-reporter-version information for macOS
+      if: ${{ runner.os == 'macOS' && inputs.coverage-reporter-version != 'latest' }}
+      shell: bash
+      run: echo "The coverage-reporter-version parameter is not available on macOS"
+
     - name: Install coveralls reporter (Linux)
       if: runner.os == 'Linux'
       shell: bash
