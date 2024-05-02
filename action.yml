@@ -67,7 +67,7 @@ inputs:
     required: false
     default: 'true'
   coverage-reporter-version:
-    description: 'Version of coverage-reporter to user'
+    description: "Version of coverage-reporter to use. Make sure to prefix the version number with 'v'. For example: v0.6.9"
     required: false
     default: 'latest'
 branding:
@@ -90,12 +90,14 @@ runs:
 
     - name: Install coveralls reporter (Linux)
       if: runner.os == 'Linux'
+      env:
+        COVERAGE_REPORTER_VERSION: ${{ inputs.coverage-reporter-version }}
       shell: bash
       run: |
         mkdir -p ~/bin/
         cd ~/bin/
-        curl -sLO https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-linux.tar.gz
-        curl -sLO https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-checksums.txt
+        curl -sLO https://github.com/coverallsapp/coverage-reporter/releases/download/${COVERAGE_REPORTER_VERSION}/coveralls-linux.tar.gz
+        curl -sLO https://github.com/coverallsapp/coverage-reporter/releases/download/${COVERAGE_REPORTER_VERSION}/coveralls-checksums.txt
         cat coveralls-checksums.txt | grep coveralls-linux.tar.gz | sha256sum --check
         tar -xzf coveralls-linux.tar.gz
         rm coveralls-checksums.txt
@@ -103,12 +105,14 @@ runs:
 
     - name: Install coveralls reporter (Windows)
       if: startsWith(runner.os, 'Windows')
+      env:
+        COVERAGE_REPORTER_VERSION: ${{ inputs.coverage-reporter-version }}
       shell: pwsh
       run: |
         New-Item -Path $env:HOME\bin -ItemType directory -Force
         Push-Location $env:HOME\bin
-        Invoke-WebRequest -Uri "https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-windows.exe" -OutFile "coveralls.exe"
-        Invoke-WebRequest -Uri "https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-checksums.txt" -OutFile "sha256sums.txt"
+        Invoke-WebRequest -Uri "https://github.com/coverallsapp/coverage-reporter/releases/download/${COVERAGE_REPORTER_VERSION}/coveralls-windows.exe" -OutFile "coveralls.exe"
+        Invoke-WebRequest -Uri "https://github.com/coverallsapp/coverage-reporter/releases/download/${COVERAGE_REPORTER_VERSION}/coveralls-checksums.txt" -OutFile "sha256sums.txt"
         (Get-FileHash coveralls.exe).Hash -eq (Get-Content ./sha256sums.txt | Where-Object{$_ -match 'windows.exe'} | ForEach-Object{($_ -split "\s+")[0]})
         Remove-Item *.txt -Force
         echo $env:HOME\bin | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
