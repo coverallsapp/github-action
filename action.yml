@@ -86,7 +86,9 @@ runs:
     - name: Report coverage-reporter-version information for macOS
       if: ${{ runner.os == 'macOS' && inputs.coverage-reporter-version != 'latest' }}
       shell: bash
-      run: echo "The coverage-reporter-version parameter is not available on macOS"
+      run: |
+        echo "The coverage-reporter-version parameter is not available on macOS" >&2
+        exit 1
 
     - name: Install coveralls reporter (Linux)
       if: runner.os == 'Linux'
