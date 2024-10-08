@@ -104,9 +104,19 @@ runs:
         else
           asset_path="download/${COVERAGE_REPORTER_VERSION}"
         fi
-        curl -sLO "https://github.com/coverallsapp/coverage-reporter/releases/${asset_path}/coveralls-linux.tar.gz"
-        curl -sLO "https://github.com/coverallsapp/coverage-reporter/releases/${asset_path}/coveralls-checksums.txt"
-        cat coveralls-checksums.txt | grep coveralls-linux.tar.gz | sha256sum --check
+        # Try to download the binary and checksum file
+        if ! curl -sLO "https://github.com/coverallsapp/coverage-reporter/releases/${asset_path}/coveralls-linux.tar.gz" ||
+           ! curl -sLO "https://github.com/coverallsapp/coverage-reporter/releases/${asset_path}/coveralls-checksums.txt"; then
+          echo "Failed to download coveralls binary or checksum."
+          [ "${{ inputs.fail-on-error }}" == "false" ] && exit 0
+          exit 1
+        fi
+        # Verify the downloaded binary
+        if ! grep coveralls-linux.tar.gz coveralls-checksums.txt | sha256sum --check; then
+          echo "Checksum verification failed."
+          [ "${{ inputs.fail-on-error }}" == "false" ] && exit 0
+          exit 1
+        fi
         tar -xzf coveralls-linux.tar.gz
         rm coveralls-checksums.txt
         echo ~/bin >> $GITHUB_PATH
@@ -134,7 +144,12 @@ runs:
       if: inputs.parallel-finished == 'true'
       shell: ${{ startsWith(runner.os, 'Windows') && 'pwsh' || 'bash' }}
       run: >-
-        coveralls done
+        if [ ! -f ~/bin/coveralls ]; then
+          echo "Coveralls binary not found."
+          [ "${{ inputs.fail-on-error }}" == "false" ] && exit 0
+          exit 1
+        fi
+        ~/bin/coveralls done
         ${{ inputs.debug == 'true' && '--debug' || '' }}
         ${{ inputs.measure == 'true' && '--measure' || '' }}
         ${{ inputs.fail-on-error == 'false' && '--no-fail' || '' }}
@@ -152,7 +167,12 @@ runs:
       if: inputs.parallel-finished != 'true'
       shell: ${{ startsWith(runner.os, 'Windows') && 'pwsh' || 'bash' }}
       run: >-
-        coveralls report
+        if [ ! -f ~/bin/coveralls ]; then
+          echo "Coveralls binary not found."
+          [ "${{ inputs.fail-on-error }}" == "false" ] && exit 0
+          exit 1
+        fi
+        ~/bin/coveralls report
         ${{ inputs.debug == 'true' && '--debug' || '' }}
         ${{ inputs.measure == 'true' && '--measure' || '' }}
         ${{ inputs.fail-on-error == 'false' && '--no-fail' || '' }}
