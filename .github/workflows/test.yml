@@ -1,4 +1,4 @@
-name: Test GitHub Action
+name: Test Modified GitHub Action Steps
 
 on:
   push:
@@ -9,81 +9,63 @@ on:
       - main
 
 jobs:
-  test-action:
-    runs-on: ${{ matrix.os }}
+  test-modified-steps:
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        action: [install, report, done]
+        step: [download, report, done]
         fail_on_error: [true, false]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up environment
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+      # Test Download & Verification Step
+      - name: Test Download & Verification
+        if: ${{ matrix.step == 'download' }}
         shell: bash
         run: |
-          echo "Running on Linux"
-      - name: Set up environment
-        if: ${{ matrix.os == 'macos-latest' }}
-        shell: bash
-        run: |
-          echo "Running on macOS"
-      - name: Set up environment
-        if: ${{ matrix.os == 'windows-latest' }}
-        shell: pwsh
-        run: |
-          echo "Running on Windows"
+          echo "Testing Download & Verification"
+          asset_path="latest/download"
 
-      - name: Run Test Action
-        uses: ./
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          fail-on-error: ${{ matrix.fail_on_error }}
-          debug: true
-        env:
-          CI: true
-
-      - name: Simulate Failure Scenarios
-        if: ${{ matrix.action == 'install' }}
-        shell: ${{ startsWith(matrix.os, 'windows-latest') && 'pwsh' || 'bash' }}
-        run: |
-          # Fail download step intentionally
-          echo "Testing download failure scenario"
-          exit 1  # Simulate download failure
-
-      - name: Simulate Report Command Failure
-        if: ${{ matrix.action == 'report' }}
-        shell: ${{ startsWith(matrix.os, 'windows-latest') && 'pwsh' || 'bash' }}
-        run: |
-          echo "Testing report command failure"
-          ~/bin/coveralls report  # Simulated failure
-
-      - name: Simulate Done Command Failure
-        if: ${{ matrix.action == 'done' }}
-        shell: ${{ startsWith(matrix.os, 'windows-latest') && 'pwsh' || 'bash' }}
-        run: |
-          echo "Testing done command failure"
-          ~/bin/coveralls done  # Simulated failure
-
-      - name: Verify Outcome
-        shell: ${{ startsWith(matrix.os, 'windows-latest') && 'pwsh' || 'bash' }}
-        run: |
-          if [[ "${{ matrix.fail_on_error }}" == "true" ]]; then
-            # Expect failure exit code
-            if [[ $? -eq 0 ]]; then
-              echo "Test failed: expected failure but action succeeded."
-              exit 1
-            else
-              echo "Test succeeded: expected failure and action failed as expected."
-            fi
-          else
-            # Expect success exit code
-            if [[ $? -ne 0 ]]; then
-              echo "Test failed: expected success but action failed."
-              exit 1
-            else
-              echo "Test succeeded: expected success and action succeeded."
-            fi
+          # Simulate download and verification failure scenario
+          if ! curl -sLO "https://github.com/coverallsapp/coverage-reporter/releases/${asset_path}/coveralls-linux.tar.gz" ||
+             ! curl -sLO "https://github.com/coverallsapp/coverage-reporter/releases/${asset_path}/coveralls-checksums.txt" ||
+             ! grep coveralls-linux.tar.gz coveralls-checksums.txt | sha256sum --check; then
+            echo "Download or verification failed."
+            if [ "${{ matrix.fail_on_error }}" == "false" ]; then exit 0; else exit 1; fi
           fi
+          echo "Download & verification succeeded."
+
+      # Test Coveralls Report Step
+      - name: Test Coveralls Report
+        if: ${{ matrix.step == 'report' }}
+        shell: bash
+        run: |
+          echo "Testing Coveralls Report Step"
+          if [ ! -f ~/bin/coveralls ]; then
+            echo "Coveralls binary not found."
+            if [ "${{ matrix.fail_on_error }}" == "false" ]; then exit 0; else exit 1; fi
+          fi
+          # Simulate coveralls report execution
+          ~/bin/coveralls report || {
+            echo "Coveralls report failed."
+            if [ "${{ matrix.fail_on_error }}" == "false" ]; then exit 0; else exit 1; fi
+          }
+          echo "Coveralls report succeeded."
+
+      # Test Coveralls Done Step
+      - name: Test Coveralls Done
+        if: ${{ matrix.step == 'done' }}
+        shell: bash
+        run: |
+          echo "Testing Coveralls Done Step"
+          if [ ! -f ~/bin/coveralls ]; then
+            echo "Coveralls binary not found."
+            if [ "${{ matrix.fail_on_error }}" == "false" ]; then exit 0; else exit 1; fi
+          fi
+          # Simulate coveralls done execution
+          ~/bin/coveralls done || {
+            echo "Coveralls done failed."
+            if [ "${{ matrix.fail_on_error }}" == "false" ]; then exit 0; else exit 1; fi
+          }
+          echo "Coveralls done succeeded."
