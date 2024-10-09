@@ -47,28 +47,27 @@ jobs:
 
       - name: Simulate Failure Scenarios
         if: ${{ matrix.action == 'install' }}
-        shell: ${{ startsWith(matrix.os, 'windows') && 'pwsh' || 'bash' }}
         run: |
           # Fail download step intentionally
           echo "Testing download failure scenario"
           exit 1  # Simulate download failure
+        shell: ${{ matrix.os == 'windows-latest' && 'pwsh' || 'bash' }}
 
       - name: Simulate Report Command Failure
         if: ${{ matrix.action == 'report' }}
-        shell: ${{ startsWith(matrix.os, 'windows') && 'pwsh' || 'bash' }}
         run: |
           echo "Testing report command failure"
           ~/bin/coveralls report  # Simulated failure
+        shell: ${{ matrix.os == 'windows-latest' && 'pwsh' || 'bash' }}
 
       - name: Simulate Done Command Failure
         if: ${{ matrix.action == 'done' }}
-        shell: ${{ startsWith(matrix.os, 'windows') && 'pwsh' || 'bash' }}
         run: |
           echo "Testing done command failure"
           ~/bin/coveralls done  # Simulated failure
+        shell: ${{ matrix.os == 'windows-latest' && 'pwsh' || 'bash' }}
 
       - name: Verify Outcome
-        shell: ${{ startsWith(matrix.os, 'windows') && 'pwsh' || 'bash' }}
         run: |
           if [[ "${{ matrix.fail_on_error }}" == "true" ]]; then
             # Expect failure exit code
@@ -86,4 +85,5 @@ jobs:
             else
               echo "Test succeeded: expected success and action succeeded."
             fi
-          fi
+        shell: ${{ matrix.os == 'windows-latest' && 'pwsh' || 'bash' }}
+        
