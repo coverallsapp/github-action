@@ -1,7 +1,7 @@
 # action.yml
 name: 'Coveralls GitHub Action'
 description: 'Send test coverage data to Coveralls.io for analysis, change tracking, and notifications.'
-author: 'Nick Merwin (Coveralls, Inc.)'
+author: Coveralls.io
 inputs:
   github-token:
     description: 'Put secrets.GITHUB_TOKEN here'
@@ -80,14 +80,28 @@ runs:
       if: runner.os == 'macOS'
       shell: bash
       run: |
+        # Enable debugging if 'debug' is true
+        [ "${{ inputs.debug }}" == "true" ] && set -x
+        
+        # Try to install coverage-reporter via Homebrew
         brew tap coverallsapp/coveralls --quiet
         brew install coveralls --quiet
 
-    - name: Report coverage-reporter-version information for macOS
+        # Check if the binary exists in the possible locations
+        if [ -f /usr/local/bin/coveralls ]; then
+          echo "/usr/local/bin" >> $GITHUB_PATH
+        elif [ -f /opt/homebrew/bin/coveralls ]; then
+          echo "/opt/homebrew/bin" >> $GITHUB_PATH
+        else
+          echo "Coveralls binary not found after installation (MacOS)."
+          exit 1
+        fi
+
+    - name: Report coverage-reporter-version exception for macOS
       if: ${{ runner.os == 'macOS' && inputs.coverage-reporter-version != 'latest' }}
       shell: bash
       run: |
-        echo "The coverage-reporter-version parameter is not available on macOS" >&2
+        echo "The coverage-reporter-version parameter is not available on macOS." >&2
         exit 1
 
     - name: Install coveralls reporter (Linux)
@@ -96,18 +110,43 @@ runs:
         COVERAGE_REPORTER_VERSION: ${{ inputs.coverage-reporter-version }}
       shell: bash
       run: |
+        # Enable debugging if 'debug' is true
+        [ "${{ inputs.debug }}" == "true" ] && set -x
+
         mkdir -p ~/bin/
         cd ~/bin/
-        if [ $COVERAGE_REPORTER_VERSION == "latest" ]
-        then
-          asset_path=latest/download
+
+        # Determine which version of coverage-reporter to download
+        if [ "$COVERAGE_REPORTER_VERSION" == "latest" ]; then
+          asset_path="latest/download"
         else
           asset_path="download/${COVERAGE_REPORTER_VERSION}"
         fi
-        curl -sLO "https://github.com/coverallsapp/coverage-reporter/releases/${asset_path}/coveralls-linux.tar.gz"
-        curl -sLO "https://github.com/coverallsapp/coverage-reporter/releases/${asset_path}/coveralls-checksums.txt"
-        cat coveralls-checksums.txt | grep coveralls-linux.tar.gz | sha256sum --check
+
+        # Try to download the binary and checksum file
+        if ! curl -sLO "https://github.com/coverallsapp/coverage-reporter/releases/${asset_path}/coveralls-linux.tar.gz" ||
+          ! curl -sLO "https://github.com/coverallsapp/coverage-reporter/releases/${asset_path}/coveralls-checksums.txt"; then
+          echo "Failed to download coveralls binary or checksum (Linux)."
+          [ "${{ inputs.fail-on-error }}" == "false" ] && exit 0
+          exit 1
+        fi
+
+        # Try to verify the downloaded binary
+        if ! grep coveralls-linux.tar.gz coveralls-checksums.txt | sha256sum --check; then
+          echo "Checksum verification failed (Linux)."
+          [ "${{ inputs.fail-on-error }}" == "false" ] && exit 0
+          exit 1
+        fi
+
         tar -xzf coveralls-linux.tar.gz
+
+        # Check if the binary exists
+        if [ ! -f ~/bin/coveralls ]; then
+          echo "Coveralls binary not found after extraction (Linux)."
+          exit 1
+        fi
+
+        # Cleanup
         rm coveralls-checksums.txt
         echo ~/bin >> $GITHUB_PATH
 
@@ -117,6 +156,12 @@ runs:
         COVERAGE_REPORTER_VERSION: ${{ inputs.coverage-reporter-version }}
       shell: pwsh
       run: |
+        # Enable debugging if 'debug' is true
+        if ("${{ inputs.debug }}" -eq "true") {
+          Set-PSDebug -Trace 1
+        }
+        
+        # Try to download the binary and checksum file
         New-Item -Path $env:HOME\bin -ItemType directory -Force
         Push-Location $env:HOME\bin
         if($env:COVERAGE_REPORTER_VERSION -eq "latest") {
@@ -126,8 +171,21 @@ runs:
           Invoke-WebRequest -Uri "https://github.com/coverallsapp/coverage-reporter/releases/download/$env:COVERAGE_REPORTER_VERSION/coveralls-windows.exe" -OutFile "coveralls.exe"
           Invoke-WebRequest -Uri "https://github.com/coverallsapp/coverage-reporter/releases/download/$env:COVERAGE_REPORTER_VERSION/coveralls-checksums.txt" -OutFile "sha256sums.txt"
         }
-        (Get-FileHash coveralls.exe).Hash -eq (Get-Content ./sha256sums.txt | Where-Object{$_ -match 'windows.exe'} | ForEach-Object{($_ -split "\s+")[0]})
-        Remove-Item *.txt -Force
+        
+        # Try to verify the downloaded binary
+        if ((Get-FileHash coveralls.exe).Hash -ne (Get-Content sha256sums.txt | Select-String 'windows.exe' | ForEach-Object { ($_ -split "\s+")[0] })) {
+          Write-Host "Checksum verification failed (Windows)."
+          exit 1
+        }
+
+        # Check if the binary exists
+        if (!(Test-Path -Path "$env:HOME\bin\coveralls.exe")) {
+          Write-Host "Coveralls binary not found after download and verification (Windows)."
+          exit 1
+        }
+
+        # Cleanup
+        Remove-Item sha256sums.txt -Force
         echo $env:HOME\bin | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
     - name: Done report
