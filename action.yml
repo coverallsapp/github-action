@@ -98,28 +98,44 @@ runs:
       run: |
         mkdir -p ~/bin/
         cd ~/bin/
-        if [ $COVERAGE_REPORTER_VERSION == "latest" ]
-        then
-          asset_path=latest/download
+        
+        if [ "$COVERAGE_REPORTER_VERSION" == "latest" ]; then
+          asset_path="latest/download"
         else
           asset_path="download/${COVERAGE_REPORTER_VERSION}"
         fi
+
+        # Debugging output to verify asset path
+        echo "Using asset path: $asset_path"
+
         # Try to download the binary and checksum file
         if ! curl -sLO "https://github.com/coverallsapp/coverage-reporter/releases/${asset_path}/coveralls-linux.tar.gz" ||
-           ! curl -sLO "https://github.com/coverallsapp/coverage-reporter/releases/${asset_path}/coveralls-checksums.txt"; then
+          ! curl -sLO "https://github.com/coverallsapp/coverage-reporter/releases/${asset_path}/coveralls-checksums.txt"; then
           echo "Failed to download coveralls binary or checksum."
           [ "${{ inputs.fail-on-error }}" == "false" ] && exit 0
           exit 1
         fi
+
+        # List files to ensure they are downloaded
+        echo "Downloaded files:"
+        ls -la
+
         # Verify the downloaded binary
         if ! grep coveralls-linux.tar.gz coveralls-checksums.txt | sha256sum --check; then
           echo "Checksum verification failed."
           [ "${{ inputs.fail-on-error }}" == "false" ] && exit 0
           exit 1
         fi
-        tar -xzf coveralls-linux.tar.gz
-        rm coveralls-checksums.txt
-        echo ~/bin >> $GITHUB_PATH
+
+    # Extract the tar.gz file
+    tar -xzf coveralls-linux.tar.gz
+
+    # List files again to verify extraction
+    echo "Files after extraction:"
+    ls -la
+
+    rm coveralls-checksums.txt
+    echo ~/bin >> $GITHUB_PATH
 
     - name: Install coveralls reporter (Windows)
       if: startsWith(runner.os, 'Windows')
