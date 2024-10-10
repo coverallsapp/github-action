@@ -176,9 +176,8 @@ runs:
         COVERAGE_REPORTER_VERSION: ${{ inputs.coverage-reporter-version }}
       shell: pwsh
       run: |
-        # Enable debugging if 'debug' is true
         if ("${{ inputs.debug }}" -eq "true") {
-          $DebugPreference = 'Continue'
+          Set-PSDebug -Trace 1
         }
         
         New-Item -Path $env:HOME\bin -ItemType directory -Force
