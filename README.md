@@ -86,9 +86,9 @@ jobs:
           - 1
           - 2
     steps:
-    - uses: actions/checkout@3
+    - uses: actions/checkout@v4
     - name: Use Node.js 16.x
-      uses: actions/setup-node@3
+      uses: actions/setup-node@v3
       with:
         node-version: 16.x
 
