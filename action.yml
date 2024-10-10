@@ -98,7 +98,7 @@ runs:
       run: |
         mkdir -p ~/bin/
         cd ~/bin/
-        if [ $COVERAGE_REPORTER_VERSION == "latest" ]
+        if [ $COVERAGE_REPORTER_VERSION = "latest" ]
         then
           asset_path=latest/download
         else
@@ -114,7 +114,7 @@ runs:
         # Verify the downloaded binary
         if ! grep coveralls-linux.tar.gz coveralls-checksums.txt | sha256sum --check; then
           echo "Checksum verification failed."
-          [ "${{ inputs.fail-on-error }}" == "false" ] && exit 0
+          [ "${{ inputs.fail-on-error }}" = "false" ] && exit 0
           exit 1
         fi
         tar -xzf coveralls-linux.tar.gz
