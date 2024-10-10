@@ -143,15 +143,15 @@ runs:
     - name: Done report
       if: inputs.parallel-finished == 'true'
       shell: ${{ startsWith(runner.os, 'Windows') && 'pwsh' || 'bash' }}
-      run: >-
+      run: |
         if [ ! -f coveralls ]; then
           echo "Coveralls binary not found."
           [ "${{ inputs.fail-on-error }}" == "false" ] && exit 0
           exit 1
-        fi \
-        coveralls done
-        ${{ inputs.debug == 'true' && '--debug' || '' }}
-        ${{ inputs.measure == 'true' && '--measure' || '' }}
+        fi
+        ~/bin/coveralls done \
+        ${{ inputs.debug == 'true' && '--debug' || '' }} \
+        ${{ inputs.measure == 'true' && '--measure' || '' }} \
         ${{ inputs.fail-on-error == 'false' && '--no-fail' || '' }}
       env:
         COVERALLS_DEBUG: ${{ inputs.debug }}
@@ -166,20 +166,20 @@ runs:
     - name: Coverage report
       if: inputs.parallel-finished != 'true'
       shell: ${{ startsWith(runner.os, 'Windows') && 'pwsh' || 'bash' }}
-      run: >-
+      run: |
         if [ ! -f coveralls ]; then
           echo "Coveralls binary not found."
           [ "${{ inputs.fail-on-error }}" == "false" ] && exit 0
           exit 1
-        fi \
-        coveralls report
-        ${{ inputs.debug == 'true' && '--debug' || '' }}
-        ${{ inputs.measure == 'true' && '--measure' || '' }}
-        ${{ inputs.fail-on-error == 'false' && '--no-fail' || '' }}
-        ${{ inputs.allow-empty == 'true' && '--allow-empty' || '' }}
-        ${{ inputs.base-path && format('--base-path {0}', inputs.base-path) || '' }}
-        ${{ inputs.format && format('--format {0}', inputs.format) || '' }}
-        ${{ inputs.file || inputs.path-to-lcov }}
+        fi
+        ~/bin/coveralls report \
+        ${{ inputs.debug == 'true' && '--debug' || '' }} \
+        ${{ inputs.measure == 'true' && '--measure' || '' }} \
+        ${{ inputs.fail-on-error == 'false' && '--no-fail' || '' }} \
+        ${{ inputs.allow-empty == 'true' && '--allow-empty' || '' }} \
+        ${{ inputs.base-path && format('--base-path {0}', inputs.base-path) || '' }} \
+        ${{ inputs.format && format('--format {0}', inputs.format) || '' }} \
+        ${{ inputs.file || inputs.path-to-lcov }} \
         ${{ inputs.files }}
       env:
         COVERALLS_DEBUG: ${{ inputs.debug }}
