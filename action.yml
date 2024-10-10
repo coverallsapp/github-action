@@ -98,7 +98,7 @@ runs:
       run: |
         mkdir -p ~/bin/
         cd ~/bin/
-        
+
         if [ "$COVERAGE_REPORTER_VERSION" == "latest" ]; then
           asset_path="latest/download"
         else
@@ -129,11 +129,9 @@ runs:
 
     # Extract the tar.gz file
     tar -xzf coveralls-linux.tar.gz
-
     # List files again to verify extraction
-    echo "Files after extraction:"
+    echo "Files after extraction"
     ls -la
-
     rm coveralls-checksums.txt
     echo ~/bin >> $GITHUB_PATH
 
