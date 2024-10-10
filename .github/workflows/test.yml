@@ -44,6 +44,7 @@ jobs:
           debug: true
         env:
           CI: true
+        continue-on-error: ${{ matrix.fail_on_error }}
 
       # - name: Simulate Failure Scenarios
       #   if: ${{ matrix.action == 'install' }}
