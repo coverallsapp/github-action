@@ -83,13 +83,25 @@ runs:
         brew tap coverallsapp/coveralls --quiet
         brew install coveralls --quiet
 
-        # Check if the binary exists in the expected location
-        if [ ! -f /usr/local/bin/coveralls ]; then
+        # Debugging output to see where Homebrew installs coveralls
+        echo "Homebrew bin directory:"
+        echo $(brew --prefix)/bin
+
+        # List files in the Homebrew bin directory
+        echo "Listing files in $(brew --prefix)/bin:"
+        ls -la $(brew --prefix)/bin
+
+        # Check if the binary exists in the possible locations
+        if [ -f /usr/local/bin/coveralls ]; then
+          echo "/usr/local/bin" >> $GITHUB_PATH
+        elif [ -f /opt/homebrew/bin/coveralls ]; then
+          echo "/opt/homebrew/bin" >> $GITHUB_PATH
+        else
           echo "Coveralls binary not found after installation (MacOS)."
           exit 1
         fi
 
-    - name: Report coverage-reporter-version information for macOS
+    - name: Report coverage-reporter-version exception for macOS
       if: ${{ runner.os == 'macOS' && inputs.coverage-reporter-version != 'latest' }}
       shell: bash
       run: |
