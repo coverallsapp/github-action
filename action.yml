@@ -86,14 +86,6 @@ runs:
         brew tap coverallsapp/coveralls --quiet
         brew install coveralls --quiet
 
-        # Debugging output to see where Homebrew installs coveralls
-        echo "Homebrew bin directory:"
-        echo $(brew --prefix)/bin
-
-        # List files in the Homebrew bin directory
-        echo "Listing files in $(brew --prefix)/bin:"
-        ls -la $(brew --prefix)/bin
-
         # Check if the binary exists in the possible locations
         if [ -f /usr/local/bin/coveralls ]; then
           echo "/usr/local/bin" >> $GITHUB_PATH
@@ -140,12 +132,6 @@ runs:
           exit 1
         fi
 
-        # List files to ensure they are downloaded
-        echo "Show current directory:"
-        pwd
-        echo "Downloaded files:"
-        ls -la
-
         # Verify the downloaded binary
         if ! grep coveralls-linux.tar.gz coveralls-checksums.txt | sha256sum --check; then
           echo "Checksum verification failed (Linux)."
@@ -155,12 +141,6 @@ runs:
 
         # Extract the tar.gz file
         tar -xzf coveralls-linux.tar.gz
-
-        # List files again to verify extraction
-        echo "Show current directory:"
-        pwd
-        echo "Files after extraction:"
-        ls -la
 
         rm coveralls-checksums.txt
         echo ~/bin >> $GITHUB_PATH
@@ -178,7 +158,7 @@ runs:
       shell: pwsh
       run: |
         if ("${{ inputs.debug }}" -eq "true") {
-          $DebugPreference = 'Continue'
+          Set-PSDebug -Trace 1
         }
         
         New-Item -Path $env:HOME\bin -ItemType directory -Force
