@@ -177,7 +177,7 @@ runs:
       shell: pwsh
       run: |
         if ("${{ inputs.debug }}" -eq "true") {
-          Set-PSDebug -Trace 1
+          $DebugPreference = 'Continue'
         }
         
         New-Item -Path $env:HOME\bin -ItemType directory -Force
