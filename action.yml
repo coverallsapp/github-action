@@ -117,6 +117,8 @@ runs:
         fi
 
         # List files to ensure they are downloaded
+        echo "Show current directory:"
+        pwd
         echo "Downloaded files:"
         ls -la
 
@@ -131,7 +133,7 @@ runs:
         tar -xzf coveralls-linux.tar.gz
 
         # List files again to verify extraction
-        echo "List current directory:"
+        echo "Show current directory:"
         pwd
         echo "Files after extraction:"
         ls -la
@@ -167,7 +169,7 @@ runs:
           [ "${{ inputs.fail-on-error }}" == "false" ] && exit 0
           exit 1
         fi
-        ~/bin/coveralls done \
+        coveralls done \
         ${{ inputs.debug == 'true' && '--debug' || '' }} \
         ${{ inputs.measure == 'true' && '--measure' || '' }} \
         ${{ inputs.fail-on-error == 'false' && '--no-fail' || '' }}
@@ -190,7 +192,7 @@ runs:
           [ "${{ inputs.fail-on-error }}" == "false" ] && exit 0
           exit 1
         fi
-        ~/bin/coveralls report \
+        coveralls report \
         ${{ inputs.debug == 'true' && '--debug' || '' }} \
         ${{ inputs.measure == 'true' && '--measure' || '' }} \
         ${{ inputs.fail-on-error == 'false' && '--no-fail' || '' }} \
