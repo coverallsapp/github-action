@@ -127,13 +127,15 @@ runs:
           exit 1
         fi
 
-    # Extract the tar.gz file
-    tar -xzf coveralls-linux.tar.gz
-    # List files again to verify extraction
-    echo "Files after extraction"
-    ls -la
-    rm coveralls-checksums.txt
-    echo ~/bin >> $GITHUB_PATH
+        # Extract the tar.gz file
+        tar -xzf coveralls-linux.tar.gz
+
+        # List files again to verify extraction
+        echo "Files after extraction:"
+        ls -la
+
+        rm coveralls-checksums.txt
+        echo ~/bin >> $GITHUB_PATH
 
     - name: Install coveralls reporter (Windows)
       if: startsWith(runner.os, 'Windows')
