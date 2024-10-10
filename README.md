@@ -54,7 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v4
 
     - name: Use Node.js 16.x
       uses: actions/setup-node@v3
