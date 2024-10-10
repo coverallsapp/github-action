@@ -1,8 +1,7 @@
 # action.yml
 name: 'Coveralls GitHub Action'
 description: 'Send test coverage data to Coveralls.io for analysis, change tracking, and notifications.'
-author: 'Nick Merwin (Coveralls, Inc.)'
-inputs:
+author: Coveralls.io
   github-token:
     description: 'Put secrets.GITHUB_TOKEN here'
     required: false
@@ -80,6 +79,9 @@ runs:
       if: runner.os == 'macOS'
       shell: bash
       run: |
+        # Enable debugging if 'debug' is true
+        [ "${{ inputs.debug }}" == "true" ] && set -x
+        
         brew tap coverallsapp/coveralls --quiet
         brew install coveralls --quiet
 
@@ -114,6 +116,9 @@ runs:
         COVERAGE_REPORTER_VERSION: ${{ inputs.coverage-reporter-version }}
       shell: bash
       run: |
+        # Enable debugging if 'debug' is true
+        [ "${{ inputs.debug }}" == "true" ] && set -x
+
         mkdir -p ~/bin/
         cd ~/bin/
 
@@ -171,6 +176,11 @@ runs:
         COVERAGE_REPORTER_VERSION: ${{ inputs.coverage-reporter-version }}
       shell: pwsh
       run: |
+        # Enable debugging if 'debug' is true
+        if ("${{ inputs.debug }}" -eq "true") {
+          $DebugPreference = 'Continue'
+        }
+        
         New-Item -Path $env:HOME\bin -ItemType directory -Force
         Push-Location $env:HOME\bin
         if($env:COVERAGE_REPORTER_VERSION -eq "latest") {
