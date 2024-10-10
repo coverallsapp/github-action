@@ -164,12 +164,12 @@ runs:
       if: inputs.parallel-finished == 'true'
       shell: ${{ startsWith(runner.os, 'Windows') && 'pwsh' || 'bash' }}
       run: |
-        if [ ! -f coveralls ]; then
+        if [ ! -f ~/bin/coveralls ]; then
           echo "Coveralls binary not found."
           [ "${{ inputs.fail-on-error }}" == "false" ] && exit 0
           exit 1
         fi
-        coveralls done \
+        ~/bin/coveralls done \
         ${{ inputs.debug == 'true' && '--debug' || '' }} \
         ${{ inputs.measure == 'true' && '--measure' || '' }} \
         ${{ inputs.fail-on-error == 'false' && '--no-fail' || '' }}
@@ -187,12 +187,12 @@ runs:
       if: inputs.parallel-finished != 'true'
       shell: ${{ startsWith(runner.os, 'Windows') && 'pwsh' || 'bash' }}
       run: |
-        if [ ! -f coveralls ]; then
+        if [ ! -f ~/bin/coveralls ]; then
           echo "Coveralls binary not found."
           [ "${{ inputs.fail-on-error }}" == "false" ] && exit 0
           exit 1
         fi
-        coveralls report \
+        ~/bin/coveralls report \
         ${{ inputs.debug == 'true' && '--debug' || '' }} \
         ${{ inputs.measure == 'true' && '--measure' || '' }} \
         ${{ inputs.fail-on-error == 'false' && '--no-fail' || '' }} \
