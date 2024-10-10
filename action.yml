@@ -2,6 +2,7 @@
 name: 'Coveralls GitHub Action'
 description: 'Send test coverage data to Coveralls.io for analysis, change tracking, and notifications.'
 author: Coveralls.io
+inputs:
   github-token:
     description: 'Put secrets.GITHUB_TOKEN here'
     required: false
