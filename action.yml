@@ -131,6 +131,8 @@ runs:
         tar -xzf coveralls-linux.tar.gz
 
         # List files again to verify extraction
+        echo "List current directory:"
+        pwd
         echo "Files after extraction:"
         ls -la
 
