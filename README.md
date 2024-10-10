@@ -8,7 +8,7 @@ When running on `pull_request` events, a comment will be added to the PR with de
 
 ## Usage
 
-The action's step needs to run after your test suite has outputted an LCOV file. Most major test runners can be configured to do so; if you're using Node, see more info [here](https://github.com/nickmerwin/node-coveralls).
+This action's step needs to run after your test suite has outputted a coverage report file. Most major test runners can be configured to do so, very likely with the adition of a test coverage library, such as `simplecov` for `ruby`, `coverage.py` for `python`, or `istanbul` or `jest` for `javascript`, etc.
 
 ### Inputs:
 
@@ -17,14 +17,14 @@ The action's step needs to run after your test suite has outputted an LCOV file.
 | `github-token`              | _required_ | Default if not specified: `${{ github.token }}`. Can be also specified this way: `github-token: ${{ secrets.GITHUB_TOKEN }}`; Coveralls uses this token to verify the appropriate repo at Coveralls and send any new status updates based on your coverage results. This variable is built into Github Actions, so __do not add it to your secrets store__. [More Info](https://help.github.com/en/actions/configuring-and-managing-workflows/authenticating-with-the-github_token)|
 | `file`                      | _optional_ | Default: all coverage files that could be found. Local path to the coverage report file produced by your test suite. An error will be thrown if no file was found. This is the file that will be sent to the Coveralls API. Leave empty if you want to combine many files reports. |
 | `files`                     | _optional_ | Default: all coverage files that could be found. Space-separated list of coverage report files produced by your test suite. Example: `files: coverage/test1.lcov coverage/test2.lcov` |
-| `format`                    | _optional_ | Force coverage report file format. If not specified, coveralls will try to detect the format based on file extension and/or content. Possible values: `lcov`, `simplecov`, `cobertura`, `jacoco`, `gcov`, `golang`, `python`. See also [actual supported coverage report formats list](https://github.com/coverallsapp/coverage-reporter#supported-coverage-report-formats). |
+| `format`                    | _optional_ | Force coverage report format. If not specified, coveralls will try to detect the format based on file extension and/or content. Possible values: `lcov`, `simplecov`, `cobertura`, `jacoco`, `gcov`, `golang`, `python`. See also [supported coverage report formats list](https://github.com/coverallsapp/coverage-reporter#supported-coverage-report-formats). |
 | `flag-name`                 | _optional (unique required if parallel)_ | Job flag name, e.g. "Unit", "Functional", or "Integration". Will be shown in the Coveralls UI. |
 | `parallel`                  | _optional_ | Set to true for parallel (or matrix) based steps, where multiple posts to Coveralls will be performed in the check. `flag-name` needs to be set and unique, e.g. `flag-name: run ${{ join(matrix.*, ' - ') }}` |
 | `parallel-finished`         | _optional_ | Set to true in the last job, after the other parallel jobs steps have completed, this will send a webhook to Coveralls to set the build complete. |
 | `carryforward`              | _optional_ | Comma separated flags used to carryforward results from previous builds if some of the parallel jobs are missing. Used only with `parallel-finished`. |
 | `coveralls-endpoint`        | _optional_ | Hostname and protocol: `https://<host>`; Specifies a [Coveralls Enterprise](https://enterprise.coveralls.io/) hostname. |
 | `allow-empty`               | _optional_ | Default: `false`. Don't fail if coverage report is empty or contains no coverage data. |
-| `base-path`                 | _optional_ | Path to the root folder of the project the coverage was collected in. Should be used in monorepos so that coveralls can process the LCOV correctly (e.g. packages/my-project) |
+| `base-path`                 | _optional_ | Path to the root folder of the project the coverage was collected in. Should be used in monorepos so that coveralls can process filenames from your coverage reports correctly (e.g. packages/my-subproject) |
 | `git-branch`                | _optional_ | Default: GITHUB_REF environment variable. Override the branch name. |
 | `git-commit`                | _optional_ | Default: GITHUB_SHA environment variable. Override the commit SHA. |
 | `compare-ref`               | _optional_ | Branch name to compare coverage with. Specify if you want to always check coverage change for PRs against one branch. |
