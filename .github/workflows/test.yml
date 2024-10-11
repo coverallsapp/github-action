@@ -46,3 +46,26 @@ jobs:
         env:
           CI: true
         continue-on-error: ${{ matrix.fail_on_error }}
+
+      - name: Test report with build-number input option
+        if: ${{ matrix.action == 'report' }}
+        uses: ./
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          fail-on-error: ${{ matrix.fail_on_error }}
+          debug: true
+          build-number: ${{ github.sha }}
+        env:
+          CI: true
+
+      - name: Test done with build-number input option
+        if: ${{ matrix.action == 'done' }}
+        uses: ./
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          fail-on-error: ${{ matrix.fail_on_error }}
+          debug: true
+          parallel-finished: true
+          build-number: ${{ github.sha }}
+        env:
+          CI: true
