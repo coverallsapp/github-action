@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        action: [report, done]  # Note: We're also testing 'install' since it's implicitly in each of these two actions
+        action: [report, done, build-number]  # Note: We're also testing 'install' since it's implicit in each action
         fail_on_error: [true, false]
     steps:
       - name: Checkout code
@@ -36,36 +36,14 @@ jobs:
         run: |
           echo "Running on Windows"
 
-      - name: Run Test Action
+      - name: Test Action
         uses: ./
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           fail-on-error: ${{ matrix.fail_on_error }}
           debug: true
-          parallel-finished: ${{ matrix.action == 'done' }}  # Only set 'parallel-finished' to true when testing 'done'
+          build-number: ${{ matrix.action == 'build-number' && github.sha || '' }} # Only set 'build-number' to `${{ github.sha }}` when testing `build-number`
+          parallel-finished: ${{ matrix.action == 'done' }}  # Only set `parallel-finished` to `true` when testing `done`
         env:
           CI: true
         continue-on-error: ${{ matrix.fail_on_error }}
-
-      - name: Test report with build-number input option
-        if: ${{ matrix.action == 'report' }}
-        uses: ./
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          fail-on-error: ${{ matrix.fail_on_error }}
-          debug: true
-          build-number: ${{ github.sha }}
-        env:
-          CI: true
-
-      - name: Test done with build-number input option
-        if: ${{ matrix.action == 'done' }}
-        uses: ./
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          fail-on-error: ${{ matrix.fail_on_error }}
-          debug: true
-          parallel-finished: true
-          build-number: ${{ github.sha }}
-        env:
-          CI: true
