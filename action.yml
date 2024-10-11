@@ -22,6 +22,9 @@ inputs:
   flag-name:
     description: 'Job flag name, e.g. "Unit", "Functional", or "Integration". Will be shown in the Coveralls UI.'
     required: false
+  build-number:
+    description: 'Override the build number autodetected from CI. This is useful if your CI tool assigns a different build number per each parallel build.'
+    required: false
   parallel:
     description: 'Set to true if you are running parallel jobs, then use "parallel-finished: true" for the last action.'
     required: false
@@ -195,6 +198,7 @@ runs:
         coveralls done
         ${{ inputs.debug == 'true' && '--debug' || '' }}
         ${{ inputs.measure == 'true' && '--measure' || '' }}
+        ${{ inputs.build-number && format('--build-number {0}', inputs.build-number) || '' }}
         ${{ inputs.fail-on-error == 'false' && '--no-fail' || '' }}
       env:
         COVERALLS_DEBUG: ${{ inputs.debug }}
@@ -216,6 +220,7 @@ runs:
         ${{ inputs.fail-on-error == 'false' && '--no-fail' || '' }}
         ${{ inputs.allow-empty == 'true' && '--allow-empty' || '' }}
         ${{ inputs.base-path && format('--base-path {0}', inputs.base-path) || '' }}
+        ${{ inputs.build-number && format('--build-number {0}', inputs.build-number) || '' }}
         ${{ inputs.format && format('--format {0}', inputs.format) || '' }}
         ${{ inputs.file || inputs.path-to-lcov }}
         ${{ inputs.files }}
