@@ -1,0 +1,49 @@
+name: Test GitHub Action
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test-action:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        action: [report, done, build-number-report, build-number-done]  # Note: We're also testing 'install' since it's implicit in each action
+        fail_on_error: [true, false]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up environment (Linux)
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        shell: bash
+        run: |
+          echo "Running on Linux"
+      - name: Set up environment (MacOS)
+        if: ${{ matrix.os == 'macos-latest' }}
+        shell: bash
+        run: |
+          echo "Running on macOS"
+      - name: Set up environment (Windows)
+        if: ${{ matrix.os == 'windows-latest' }}
+        shell: pwsh
+        run: |
+          echo "Running on Windows"
+
+      - name: Test Action
+        uses: ./
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          fail-on-error: ${{ matrix.fail_on_error }}
+          debug: true
+          build-number: ${{ (matrix.action == 'build-number-report' || matrix.action == 'build-number-done') && github.sha || '' }} # Only set 'build-number' to `${{ github.sha }}` when testing `build-number-report` or `build-number-done`
+          parallel-finished: ${{ matrix.action == 'done' || matrix.action == 'build-number-done' }}  # Only set `parallel-finished` to `true` when testing `done` or `build-number-done`
+        env:
+          CI: true
+        continue-on-error: ${{ matrix.fail_on_error }}
