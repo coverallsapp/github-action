@@ -49,8 +49,3 @@ jobs:
         env:
           CI: true
         continue-on-error: true
-
-      - name: (Debug) Print coverage-reporter-version
-        run: |
-          echo "coverage-reporter-version: ${{ matrix.coverage_reporter_version }}"
-
