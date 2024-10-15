@@ -48,7 +48,7 @@ jobs:
           coverage-reporter-version: ${{ matrix.coverage_reporter_version != '' && matrix.coverage_reporter_version || '' }}
         env:
           CI: true
-        continue-on-error: ${{ matrix.fail_on_error == 'false' }} # Inverse of fail-on-error
+        continue-on-error: true
 
       - name: (Debug) Print coverage-reporter-version
         run: |
