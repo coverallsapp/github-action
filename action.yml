@@ -120,7 +120,7 @@ runs:
         cd ~/bin/
 
         # Determine which version of coverage-reporter to download
-        if [ "$COVERAGE_REPORTER_VERSION" == "latest" ]; then
+        if [ -z "$COVERAGE_REPORTER_VERSION" ] || [ "$COVERAGE_REPORTER_VERSION" == "latest" ]; then
           asset_path="latest/download"
         else
           asset_path="download/${COVERAGE_REPORTER_VERSION}"
@@ -167,7 +167,7 @@ runs:
         # Try to download the binary and checksum file
         New-Item -Path $env:HOME\bin -ItemType directory -Force
         Push-Location $env:HOME\bin
-        if($env:COVERAGE_REPORTER_VERSION -eq "latest") {
+        if ([string]::IsNullOrEmpty($env:COVERAGE_REPORTER_VERSION) -or $env:COVERAGE_REPORTER_VERSION -eq "latest") {
           Invoke-WebRequest -Uri "https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-windows.exe" -OutFile "coveralls.exe"
           Invoke-WebRequest -Uri "https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-checksums.txt" -OutFile "sha256sums.txt"
         } else {
