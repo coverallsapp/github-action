@@ -1,0 +1,26 @@
+name: Update Major Version Tag
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  update-major-version-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Extract Major Version
+        id: extract_major_version
+        run: |
+          # Extract the major version part (e.g., "v2" from "v2.3.1")
+          echo "release_tag=${{ github.event.release.tag_name }}" >> $GITHUB_ENV
+          major_version=$(echo "${{ github.event.release.tag_name }}" | grep -oE "^v[0-9]+")
+          echo "major_version=$major_version" >> $GITHUB_ENV
+
+      - name: Update Major Version Tag
+        run: |
+          git fetch --tags
+          git tag -f ${{ env.major_version }} ${{ github.event.release.tag_name }}
+          git push origin ${{ env.major_version }} --force
