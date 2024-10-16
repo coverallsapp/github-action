@@ -24,3 +24,9 @@ jobs:
           git fetch --tags
           git tag -f ${{ env.major_version }} ${{ github.event.release.tag_name }}
           git push origin ${{ env.major_version }} --force
+
+      - name: Fetch Updated Tags
+        run: git fetch --tags --force
+      
+      - name: Verify Tag
+        run: git show ${{ env.major_version }}
