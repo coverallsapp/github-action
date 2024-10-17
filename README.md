@@ -34,9 +34,11 @@ This action's step needs to run after your test suite has outputted a coverage r
 | `fail-on-error`             | _optional_ | Default: `true`. Set to `false` to avoid CI failure when upload fails due to any errors. |
 | `coverage-reporter-version` | _optional_ | Default: `latest`. Version of coverage-reporter to use. Make sure to prefix the version number with 'v'. For example: v0.6.9. Not available currently on macOS. |
 
-### Outputs:
-
-* `coveralls-api-result`: JSON response from the Coveralls API with a status code and url for the Job on Coveralls.
+<!-- Leaving this here until we decide whether to bring back `coveralls-api-result` in v2 -->
+<!-- Please submit any questions, suggestions, requests to: support@coveralls.io -->
+<!-- ### Outputs: -->
+<!-- * `coveralls-api-result`: JSON response from the Coveralls API with a status code and url for the Job on Coveralls. -->
+<!-- // Leaving this here until we decide whether to bring back `coveralls-api-result` in v2 -->
 
 ### Standard Example:
 
