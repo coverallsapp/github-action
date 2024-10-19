@@ -46,6 +46,7 @@ jobs:
           build-number: ${{ (matrix.action == 'build-number-report' || matrix.action == 'build-number-done') && github.sha || '' }} # Only set 'build-number' to `${{ github.sha }}` when testing `build-number-report` or `build-number-done`
           parallel-finished: ${{ matrix.action == 'done' || matrix.action == 'build-number-done' }}  # Only set `parallel-finished` to `true` when testing `done` or `build-number-done`
           coverage-reporter-version: ${{ matrix.coverage_reporter_version != '' && matrix.coverage_reporter_version || '' }}
+          coverage-reporter-platform: ${{ matrix.coverage_reporter_platform }}
         env:
           CI: true
         continue-on-error: true
