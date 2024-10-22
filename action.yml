@@ -132,8 +132,10 @@ runs:
         # Determine which version of coverage-reporter to download
         if [ -z "$COVERAGE_REPORTER_VERSION" ] || [ "$COVERAGE_REPORTER_VERSION" == "latest" ]; then
           asset_path="latest/download"
+          version_message="latest"
         else
           asset_path="download/${COVERAGE_REPORTER_VERSION}"
+          version_message="$COVERAGE_REPORTER_VERSION"
         fi
 
         # Determine the platform-specific filename
@@ -165,7 +167,7 @@ runs:
           exit 1
         fi
 
-        tar -xzf coveralls-linux.tar.gz
+        tar -xzf ${platform_filename}
 
         # Check if the binary exists
         if [ ! -f ~/bin/coveralls ]; then
