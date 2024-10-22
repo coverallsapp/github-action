@@ -49,4 +49,4 @@ jobs:
           coverage-reporter-platform: ${{ matrix.coverage_reporter_platform }}
         env:
           CI: true
-        continue-on-error: true
+        # continue-on-error: true
