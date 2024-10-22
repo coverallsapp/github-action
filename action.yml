@@ -145,9 +145,8 @@ runs:
             platform_filename="coveralls-linux-aarch64.tar.gz"
             ;;
           *)
-            echo "Unsupported platform: $COVERAGE_REPORTER_PLATFORM"
-            [ "${{ inputs.fail-on-error }}" == "false" ] && exit 0
-            exit 1
+            echo "Warning: Unsupported platform: $COVERAGE_REPORTER_PLATFORM. The default x86_64 version ($version_message) will be used." >&2
+            platform_filename="coveralls-linux-x86_64.tar.gz"
             ;;
         esac
 
