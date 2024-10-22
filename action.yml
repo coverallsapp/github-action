@@ -161,8 +161,32 @@ runs:
         fi
 
         # Try to verify the downloaded binary
-        if ! grep "${platform_filename}" coveralls-checksums.txt | sha256sum -c; then
+        # if ! grep "${platform_filename}" coveralls-checksums.txt | sha256sum -c; then
+        #   echo "Checksum verification failed (Linux)."
+        #   [ "${{ inputs.fail-on-error }}" == "false" ] && exit 0
+        #   exit 1
+        # fi
+
+        # Print contents of checksum file for debugging
+        echo "Contents of coveralls-checksums.txt:"
+        cat coveralls-checksums.txt
+
+        # Extract the expected checksum
+        expected_checksum=$(grep "${platform_filename}" coveralls-checksums.txt | awk '{print $1}')
+        if [ -z "$expected_checksum" ]; then
+          echo "Failed to extract checksum for ${platform_filename}"
+          [ "${{ inputs.fail-on-error }}" == "false" ] && exit 0
+          exit 1
+        fi
+
+        # Compute the actual checksum
+        actual_checksum=$(sha256sum "${platform_filename}" | awk '{print $1}')
+
+        # Compare checksums
+        if [ "$expected_checksum" != "$actual_checksum" ]; then
           echo "Checksum verification failed (Linux)."
+          echo "Expected: $expected_checksum"
+          echo "Actual: $actual_checksum"
           [ "${{ inputs.fail-on-error }}" == "false" ] && exit 0
           exit 1
         fi
