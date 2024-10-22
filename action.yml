@@ -140,7 +140,7 @@ runs:
 
         # Determine the platform-specific filename
         case "$COVERAGE_REPORTER_PLATFORM" in
-          x86_64)
+          x86_64|"")
             platform_filename="coveralls-linux-x86_64.tar.gz"
             ;;
           aarch64|arm64)
