@@ -138,19 +138,47 @@ runs:
           version_message="$COVERAGE_REPORTER_VERSION"
         fi
 
-        # Determine the platform-specific filename
+        # Function to compare version numbers
+        version_ge() {
+          # Compare two version numbers
+          [ "$(printf '%s\n' "$@" | sort -V | head -n 1)" != "$1" ]
+        }
+
+        # Determine the platform-specific filename:
+        # This logic is necessary due to the introduction of multiple platform support starting from v0.6.15.
+        # It selects the correct filename based on the specified platform and version, while ensuring
+        # backward compatibility with earlier versions that only supported a generic Linux binary for x86_64.
         case "$COVERAGE_REPORTER_PLATFORM" in
           x86_64|"")
-            platform_filename="coveralls-linux-x86_64.tar.gz"
+            if version_ge "$COVERAGE_REPORTER_VERSION" "v0.6.15"; then
+              platform_filename="coveralls-linux-x86_64.tar.gz"
+            else
+              platform_filename="coveralls-linux.tar.gz"
+            fi
             ;;
           aarch64|arm64)
-            platform_filename="coveralls-linux-aarch64.tar.gz"
+            if version_ge "$COVERAGE_REPORTER_VERSION" "v0.6.15"; then
+              platform_filename="coveralls-linux-aarch64.tar.gz"
+            else
+              echo "Warning: The aarch64/arm64 platform is only supported from version v0.6.15 onwards. Proceeding with v0.6.15." >&2
+              asset_path="download/v0.6.15"
+              platform_filename="coveralls-linux-aarch64.tar.gz"
+            fi
             ;;
           *)
             echo "Warning: Unsupported platform: $COVERAGE_REPORTER_PLATFORM. The default x86_64 version ($version_message) will be used." >&2
-            platform_filename="coveralls-linux-x86_64.tar.gz"
+            if version_ge "$COVERAGE_REPORTER_VERSION" "v0.6.15"; then
+              platform_filename="coveralls-linux-x86_64.tar.gz"
+            else
+              platform_filename="coveralls-linux.tar.gz"
+            fi
             ;;
         esac
+
+        # Checksum verification:
+        # The following code was chosen to replace the more simple `sha256sum -c` because it provides
+        # clearer debugging information around our new matrix of supported coverage-reporter versions and platforms.
+        # We may drop back to `${platform_filename}" coveralls-checksums.txt | sha256sum -c` when we're more confidently handling these.
 
         # Try to download the binary and checksum file
         if ! curl -sLO "https://github.com/coverallsapp/coverage-reporter/releases/${asset_path}/${platform_filename}" ||
@@ -160,18 +188,11 @@ runs:
           exit 1
         fi
 
-        # Try to verify the downloaded binary
-        # if ! grep "${platform_filename}" coveralls-checksums.txt | sha256sum -c; then
-        #   echo "Checksum verification failed (Linux)."
-        #   [ "${{ inputs.fail-on-error }}" == "false" ] && exit 0
-        #   exit 1
-        # fi
-
-        # Print contents of checksum file for debugging
+        # DEBUG: Print contents of checksum file for debugging
         echo "Contents of coveralls-checksums.txt:"
         cat coveralls-checksums.txt
 
-        # Extract the expected checksum
+        # Extract expected checksum
         expected_checksum=$(grep "${platform_filename}" coveralls-checksums.txt | awk '{print $1}')
         if [ -z "$expected_checksum" ]; then
           echo "Failed to extract checksum for ${platform_filename}"
@@ -179,10 +200,10 @@ runs:
           exit 1
         fi
 
-        # Compute the actual checksum
+        # Compute actual checksum
         actual_checksum=$(sha256sum "${platform_filename}" | awk '{print $1}')
 
-        # Compare checksums
+        # Perform verification by comparing expected and actual checksums
         if [ "$expected_checksum" != "$actual_checksum" ]; then
           echo "Checksum verification failed (Linux)."
           echo "Expected: $expected_checksum"
