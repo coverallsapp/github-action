@@ -73,12 +73,28 @@ inputs:
     description: "Version of coverage-reporter to use. Make sure to prefix the version number with 'v'. For example: v0.6.9"
     required: false
     default: 'latest'
+  coverage-reporter-platform:
+    description: "Platform of coverage-reporter to use on Linux runners. Supported values: x86_64 (default) and aarch64 (or arm64)"
+    required: false
+    default: 'x86_64'
 branding:
   color: 'green'
   icon: 'percent'
 runs:
   using: 'composite'
   steps:
+    - name: Report coverage-reporter-version exception for macOS
+      if: ${{ runner.os == 'macOS' && inputs.coverage-reporter-version != 'latest' }}
+      shell: bash
+      run: |
+        echo "Warning: The coverage-reporter-version parameter is not available on macOS. The latest version will be installed via Homebrew." >&2
+
+    - name: Report coverage-reporter-platform exception for macOS
+      if: ${{ runner.os == 'macOS' && inputs.coverage-reporter-platform != '' }}
+      shell: bash
+      run: |
+        echo "Warning: The coverage-reporter-platform parameter is not available on macOS. The default version for macOS will be used." >&2
+    
     - name: Install coveralls reporter (macOS)
       if: runner.os == 'macOS'
       shell: bash
@@ -100,21 +116,11 @@ runs:
           exit 1
         fi
 
-    - name: Report coverage-reporter-version exception for macOS
-      if: ${{ runner.os == 'macOS' && inputs.coverage-reporter-version != 'latest' }}
-      shell: bash
-      run: |
-        echo "The coverage-reporter-version parameter is not available on macOS." >&2
-        if [[ "${{ inputs.fail-on-error }}" == "true" ]]; then
-          exit 1
-        else
-          exit 0
-        fi
-
     - name: Install coveralls reporter (Linux)
       if: runner.os == 'Linux'
       env:
         COVERAGE_REPORTER_VERSION: ${{ inputs.coverage-reporter-version }}
+        COVERAGE_REPORTER_PLATFORM: ${{ inputs.coverage-reporter-platform }}
       shell: bash
       run: |
         # Enable debugging if 'debug' is true
@@ -126,26 +132,87 @@ runs:
         # Determine which version of coverage-reporter to download
         if [ -z "$COVERAGE_REPORTER_VERSION" ] || [ "$COVERAGE_REPORTER_VERSION" == "latest" ]; then
           asset_path="latest/download"
+          version_message="latest"
         else
           asset_path="download/${COVERAGE_REPORTER_VERSION}"
+          version_message="$COVERAGE_REPORTER_VERSION"
         fi
 
+        # Function to compare version numbers
+        version_ge() {
+          # Compare two version numbers
+          [ "$(printf '%s\n' "$@" | sort -V | head -n 1)" != "$1" ]
+        }
+
+        # Determine the platform-specific filename:
+        # This logic is necessary due to the introduction of multiple platform support starting from v0.6.15.
+        # It selects the correct filename based on the specified platform and version, while ensuring
+        # backward compatibility with earlier versions that only supported a generic Linux binary for x86_64.
+        case "$COVERAGE_REPORTER_PLATFORM" in
+          x86_64|"")
+            if version_ge "$COVERAGE_REPORTER_VERSION" "v0.6.15"; then
+              platform_filename="coveralls-linux-x86_64.tar.gz"
+            else
+              platform_filename="coveralls-linux.tar.gz"
+            fi
+            ;;
+          aarch64|arm64)
+            if version_ge "$COVERAGE_REPORTER_VERSION" "v0.6.15"; then
+              platform_filename="coveralls-linux-aarch64.tar.gz"
+            else
+              echo "Warning: The aarch64/arm64 platform is only supported from version v0.6.15 onwards. Proceeding with v0.6.15." >&2
+              asset_path="download/v0.6.15"
+              platform_filename="coveralls-linux-aarch64.tar.gz"
+            fi
+            ;;
+          *)
+            echo "Warning: Unsupported platform: $COVERAGE_REPORTER_PLATFORM. The default x86_64 version ($version_message) will be used." >&2
+            if version_ge "$COVERAGE_REPORTER_VERSION" "v0.6.15"; then
+              platform_filename="coveralls-linux-x86_64.tar.gz"
+            else
+              platform_filename="coveralls-linux.tar.gz"
+            fi
+            ;;
+        esac
+
+        # Checksum verification:
+        # The following code was chosen to replace the more simple `sha256sum -c` because it provides
+        # clearer debugging information around our new matrix of supported coverage-reporter versions and platforms.
+        # We may drop back to `${platform_filename}" coveralls-checksums.txt | sha256sum -c` when we're more confidently handling these.
+
         # Try to download the binary and checksum file
-        if ! curl -sLO "https://github.com/coverallsapp/coverage-reporter/releases/${asset_path}/coveralls-linux.tar.gz" ||
+        if ! curl -sLO "https://github.com/coverallsapp/coverage-reporter/releases/${asset_path}/${platform_filename}" ||
           ! curl -sLO "https://github.com/coverallsapp/coverage-reporter/releases/${asset_path}/coveralls-checksums.txt"; then
           echo "Failed to download coveralls binary or checksum (Linux)."
           [ "${{ inputs.fail-on-error }}" == "false" ] && exit 0
           exit 1
         fi
 
-        # Try to verify the downloaded binary
-        if ! grep coveralls-linux.tar.gz coveralls-checksums.txt | sha256sum -c; then
-          echo "Checksum verification failed (Linux)."
+        # DEBUG: Print contents of checksum file for debugging
+        echo "Contents of coveralls-checksums.txt:"
+        cat coveralls-checksums.txt
+
+        # Extract expected checksum
+        expected_checksum=$(grep "${platform_filename}" coveralls-checksums.txt | awk '{print $1}')
+        if [ -z "$expected_checksum" ]; then
+          echo "Failed to extract checksum for ${platform_filename}"
           [ "${{ inputs.fail-on-error }}" == "false" ] && exit 0
           exit 1
         fi
 
-        tar -xzf coveralls-linux.tar.gz
+        # Compute actual checksum
+        actual_checksum=$(sha256sum "${platform_filename}" | awk '{print $1}')
+
+        # Perform verification by comparing expected and actual checksums
+        if [ "$expected_checksum" != "$actual_checksum" ]; then
+          echo "Checksum verification failed (Linux)."
+          echo "Expected: $expected_checksum"
+          echo "Actual: $actual_checksum"
+          [ "${{ inputs.fail-on-error }}" == "false" ] && exit 0
+          exit 1
+        fi
+
+        tar -xzf "${platform_filename}"
 
         # Check if the binary exists
         if [ ! -f ~/bin/coveralls ]; then
@@ -157,6 +224,12 @@ runs:
         rm coveralls-checksums.txt
         echo ~/bin >> $GITHUB_PATH
 
+    - name: Report coverage-reporter-platform exception for Windows
+      if: ${{ startsWith(runner.os, 'Windows') && inputs.coverage-reporter-platform != '' }}
+      shell: pwsh
+      run: |
+        Write-Host "Warning: The coverage-reporter-platform parameter is not available on Windows. The default version for Windows will be used." -ForegroundColor Yellow
+    
     - name: Install coveralls reporter (Windows)
       if: startsWith(runner.os, 'Windows')
       env:
