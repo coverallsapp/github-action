@@ -94,14 +94,14 @@ runs:
       shell: bash
       run: |
         echo "Warning: The coverage-reporter-platform parameter is not available on macOS. The default version for macOS will be used." >&2
-    
+
     - name: Install coveralls reporter (macOS)
       if: runner.os == 'macOS'
       shell: bash
       run: |
         # Enable debugging if 'debug' is true
         [ "${{ inputs.debug }}" == "true" ] && set -x
-        
+
         # Try to install coverage-reporter via Homebrew
         brew tap coverallsapp/coveralls --quiet
         brew install coveralls --quiet
@@ -148,6 +148,7 @@ runs:
         # This logic is necessary due to the introduction of multiple platform support starting from v0.6.15.
         # It selects the correct filename based on the specified platform and version, while ensuring
         # backward compatibility with earlier versions that only supported a generic Linux binary for x86_64.
+        [ "$COVERAGE_REPORTER_PLATFORM" ] || COVERAGE_REPORTER_PLATFORM="$(uname -m)"
         case "$COVERAGE_REPORTER_PLATFORM" in
           x86_64|"")
             if version_ge "$COVERAGE_REPORTER_VERSION" "v0.6.15"; then
@@ -229,7 +230,7 @@ runs:
       shell: pwsh
       run: |
         Write-Host "Warning: The coverage-reporter-platform parameter is not available on Windows. The default version for Windows will be used." -ForegroundColor Yellow
-    
+
     - name: Install coveralls reporter (Windows)
       if: startsWith(runner.os, 'Windows')
       env:
@@ -240,7 +241,7 @@ runs:
         if ("${{ inputs.debug }}" -eq "true") {
           Set-PSDebug -Trace 1
         }
-        
+
         # Try to download the binary and checksum file
         New-Item -Path $env:HOME\bin -ItemType directory -Force
         Push-Location $env:HOME\bin
@@ -251,7 +252,7 @@ runs:
           Invoke-WebRequest -Uri "https://github.com/coverallsapp/coverage-reporter/releases/download/$env:COVERAGE_REPORTER_VERSION/coveralls-windows.exe" -OutFile "coveralls.exe"
           Invoke-WebRequest -Uri "https://github.com/coverallsapp/coverage-reporter/releases/download/$env:COVERAGE_REPORTER_VERSION/coveralls-checksums.txt" -OutFile "sha256sums.txt"
         }
-        
+
         # Try to verify the downloaded binary
         if ((Get-FileHash coveralls.exe).Hash -ne (Get-Content sha256sums.txt | Select-String 'windows.exe' | ForEach-Object { ($_ -split "\s+")[0] })) {
           Write-Host "Checksum verification failed (Windows)."
