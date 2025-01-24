@@ -34,7 +34,7 @@ This action's step needs to run after your test suite has outputted a coverage r
 | `measure`                    | _optional_ | Default: `false`. Set to `true` to enable time measurement logging. |
 | `fail-on-error`              | _optional_ | Default: `true`. Set to `false` to avoid CI failure when upload fails due to any errors. |
 | `coverage-reporter-version`  | _optional_ | Default: `latest`. Version of coverage-reporter to use. Make sure to prefix the version number with 'v'. For example: v0.6.9. Not available currently on macOS. |
-| `coverage-reporter-platform` | _optional_ | Default: `x86_64`. Platform of coverage-reporter to use on Linux runners. Supported values: x86_64 (default) and aarch64 (or arm64). |
+| `coverage-reporter-platform` | _optional_ | Default: `x86_64`. Platform of coverage-reporter to use on Linux runners. Supported values: `x86_64` (default) and `aarch64` (or `arm64`). |
 
 <!-- Leaving this here until we decide whether to bring back `coveralls-api-result` in v2 -->
 <!-- Please submit any questions, suggestions, requests to: support@coveralls.io -->
