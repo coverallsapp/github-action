@@ -74,9 +74,9 @@ inputs:
     required: false
     default: 'latest'
   coverage-reporter-platform:
-    description: "Platform of coverage-reporter to use on Linux runners. Supported values: x86_64 (default) and aarch64 (or arm64)"
+    description: "Platform of coverage-reporter to use on Linux runners. Supported values: auto-detect (default), x86_64, aarch64, arm64."
     required: false
-    default: 'x86_64'
+    default: 'auto-detect'
 branding:
   color: 'green'
   icon: 'percent'
@@ -148,7 +148,9 @@ runs:
         # This logic is necessary due to the introduction of multiple platform support starting from v0.6.15.
         # It selects the correct filename based on the specified platform and version, while ensuring
         # backward compatibility with earlier versions that only supported a generic Linux binary for x86_64.
-        [ "$COVERAGE_REPORTER_PLATFORM" ] || COVERAGE_REPORTER_PLATFORM="$(uname -m)"
+        if [ -z "$COVERAGE_REPORTER_PLATFORM" ] || [ "$COVERAGE_REPORTER_PLATFORM" == "auto-detect" ]; then
+          COVERAGE_REPORTER_PLATFORM="$(uname -m)"
+        fi
         case "$COVERAGE_REPORTER_PLATFORM" in
           x86_64|"")
             if version_ge "$COVERAGE_REPORTER_VERSION" "v0.6.15"; then
