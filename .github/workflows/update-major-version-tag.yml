@@ -25,8 +25,20 @@ jobs:
           git tag -f ${{ env.major_version }} ${{ github.event.release.tag_name }}
           git push origin ${{ env.major_version }} --force
 
+      - name: Update release/v* branch to major tag
+        run: |
+          git fetch origin
+          branch_name="release/${{ env.major_version }}"
+          git branch -f "$branch_name" ${{ env.major_version }}
+          git push origin "$branch_name" --force
+
       - name: Fetch Updated Tags
         run: git fetch --tags --force
       
       - name: Verify Tag
         run: git show ${{ env.major_version }}
+
+      - name: Verify release/v* branch
+        run: |
+          branch_name="release/${{ env.major_version }}"
+          git show "$branch_name"
