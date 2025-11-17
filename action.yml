@@ -103,8 +103,11 @@ runs:
         [ "${{ inputs.debug }}" == "true" ] && set -x
 
         # Try to install coverage-reporter via Homebrew
-        brew tap coverallsapp/coveralls --quiet
-        brew install coveralls --quiet
+        if ! brew tap coverallsapp/coveralls --quiet || ! brew install coveralls --quiet; then
+          echo "Failed to install coveralls via Homebrew (macOS)."
+          [ "${{ inputs.fail-on-error }}" == "false" ] && exit 0
+          exit 1
+        fi
 
         # Check if the binary exists in the possible locations
         if [ -f /usr/local/bin/coveralls ]; then
@@ -113,6 +116,7 @@ runs:
           echo "/opt/homebrew/bin" >> $GITHUB_PATH
         else
           echo "Coveralls binary not found after installation (MacOS)."
+          [ "${{ inputs.fail-on-error }}" == "false" ] && exit 0
           exit 1
         fi
 
@@ -220,6 +224,7 @@ runs:
         # Check if the binary exists
         if [ ! -f ~/bin/coveralls ]; then
           echo "Coveralls binary not found after extraction (Linux)."
+          [ "${{ inputs.fail-on-error }}" == "false" ] && exit 0
           exit 1
         fi
 
@@ -247,23 +252,37 @@ runs:
         # Try to download the binary and checksum file
         New-Item -Path $env:HOME\bin -ItemType directory -Force
         Push-Location $env:HOME\bin
-        if ([string]::IsNullOrEmpty($env:COVERAGE_REPORTER_VERSION) -or $env:COVERAGE_REPORTER_VERSION -eq "latest") {
-          Invoke-WebRequest -Uri "https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-windows.exe" -OutFile "coveralls.exe"
-          Invoke-WebRequest -Uri "https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-checksums.txt" -OutFile "sha256sums.txt"
-        } else {
-          Invoke-WebRequest -Uri "https://github.com/coverallsapp/coverage-reporter/releases/download/$env:COVERAGE_REPORTER_VERSION/coveralls-windows.exe" -OutFile "coveralls.exe"
-          Invoke-WebRequest -Uri "https://github.com/coverallsapp/coverage-reporter/releases/download/$env:COVERAGE_REPORTER_VERSION/coveralls-checksums.txt" -OutFile "sha256sums.txt"
+        try {
+          if ([string]::IsNullOrEmpty($env:COVERAGE_REPORTER_VERSION) -or $env:COVERAGE_REPORTER_VERSION -eq "latest") {
+            Invoke-WebRequest -Uri "https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-windows.exe" -OutFile "coveralls.exe"
+            Invoke-WebRequest -Uri "https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-checksums.txt" -OutFile "sha256sums.txt"
+          } else {
+            Invoke-WebRequest -Uri "https://github.com/coverallsapp/coverage-reporter/releases/download/$env:COVERAGE_REPORTER_VERSION/coveralls-windows.exe" -OutFile "coveralls.exe"
+            Invoke-WebRequest -Uri "https://github.com/coverallsapp/coverage-reporter/releases/download/$env:COVERAGE_REPORTER_VERSION/coveralls-checksums.txt" -OutFile "sha256sums.txt"
+          }
+        } catch {
+          Write-Host "Failed to download coveralls binary or checksum (Windows)."
+          if ("${{ inputs.fail-on-error }}" -eq "false") {
+            exit 0
+          }
+          exit 1
         }
 
         # Try to verify the downloaded binary
         if ((Get-FileHash coveralls.exe).Hash -ne (Get-Content sha256sums.txt | Select-String 'windows.exe' | ForEach-Object { ($_ -split "\s+")[0] })) {
           Write-Host "Checksum verification failed (Windows)."
+          if ("${{ inputs.fail-on-error }}" -eq "false") {
+            exit 0
+          }
           exit 1
         }
 
         # Check if the binary exists
         if (!(Test-Path -Path "$env:HOME\bin\coveralls.exe")) {
           Write-Host "Coveralls binary not found after download and verification (Windows)."
+          if ("${{ inputs.fail-on-error }}" -eq "false") {
+            exit 0
+          }
           exit 1
         }
 
@@ -271,15 +290,17 @@ runs:
         Remove-Item sha256sums.txt -Force
         echo $env:HOME\bin | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
-    - name: Done report
-      if: inputs.parallel-finished == 'true'
-      shell: ${{ startsWith(runner.os, 'Windows') && 'pwsh' || 'bash' }}
-      run: >-
-        coveralls done
-        ${{ inputs.debug == 'true' && '--debug' || '' }}
-        ${{ inputs.measure == 'true' && '--measure' || '' }}
-        ${{ inputs.build-number && format('--build-number {0}', inputs.build-number) || '' }}
-        ${{ inputs.fail-on-error == 'false' && '--no-fail' || '' }}
+    - name: Done report (Unix)
+      if: inputs.parallel-finished == 'true' && !startsWith(runner.os, 'Windows')
+      shell: bash
+      run: |
+        # Check if coveralls binary exists
+        if ! command -v coveralls &> /dev/null; then
+          echo "Coveralls binary not found. Skipping done report."
+          [ "${{ inputs.fail-on-error }}" == "false" ] && exit 0
+          exit 1
+        fi
+        coveralls done ${{ inputs.debug == 'true' && '--debug' || '' }} ${{ inputs.measure == 'true' && '--measure' || '' }} ${{ inputs.build-number && format('--build-number {0}', inputs.build-number) || '' }} ${{ inputs.fail-on-error == 'false' && '--no-fail' || '' }}
       env:
         COVERALLS_DEBUG: ${{ inputs.debug }}
         COVERALLS_CARRYFORWARD_FLAGS: ${{ inputs.carryforward }}
@@ -290,20 +311,66 @@ runs:
         COVERALLS_GIT_COMMIT: ${{ inputs.git-commit }}
         COVERALLS_REPO_TOKEN: ${{ inputs.github-token }}
 
-    - name: Coverage report
-      if: inputs.parallel-finished != 'true'
-      shell: ${{ startsWith(runner.os, 'Windows') && 'pwsh' || 'bash' }}
-      run: >-
-        coveralls report
-        ${{ inputs.debug == 'true' && '--debug' || '' }}
-        ${{ inputs.measure == 'true' && '--measure' || '' }}
-        ${{ inputs.fail-on-error == 'false' && '--no-fail' || '' }}
-        ${{ inputs.allow-empty == 'true' && '--allow-empty' || '' }}
-        ${{ inputs.base-path && format('--base-path {0}', inputs.base-path) || '' }}
-        ${{ inputs.build-number && format('--build-number {0}', inputs.build-number) || '' }}
-        ${{ inputs.format && format('--format {0}', inputs.format) || '' }}
-        ${{ inputs.file || inputs.path-to-lcov }}
-        ${{ inputs.files }}
+    - name: Done report (Windows)
+      if: inputs.parallel-finished == 'true' && startsWith(runner.os, 'Windows')
+      shell: pwsh
+      run: |
+        # Check if coveralls binary exists
+        if (!(Get-Command coveralls -ErrorAction SilentlyContinue)) {
+          Write-Host "Coveralls binary not found. Skipping done report."
+          if ("${{ inputs.fail-on-error }}" -eq "false") {
+            exit 0
+          }
+          exit 1
+        }
+        coveralls done ${{ inputs.debug == 'true' && '--debug' || '' }} ${{ inputs.measure == 'true' && '--measure' || '' }} ${{ inputs.build-number && format('--build-number {0}', inputs.build-number) || '' }} ${{ inputs.fail-on-error == 'false' && '--no-fail' || '' }}
+      env:
+        COVERALLS_DEBUG: ${{ inputs.debug }}
+        COVERALLS_CARRYFORWARD_FLAGS: ${{ inputs.carryforward }}
+        COVERALLS_FLAG_NAME: ${{ inputs.flag-name }}
+        COVERALLS_PARALLEL: ${{ inputs.parallel }}
+        COVERALLS_ENDPOINT: ${{ inputs.coveralls-endpoint }}
+        COVERALLS_GIT_BRANCH: ${{ inputs.git-branch }}
+        COVERALLS_GIT_COMMIT: ${{ inputs.git-commit }}
+        COVERALLS_REPO_TOKEN: ${{ inputs.github-token }}
+
+    - name: Coverage report (Unix)
+      if: inputs.parallel-finished != 'true' && !startsWith(runner.os, 'Windows')
+      shell: bash
+      run: |
+        # Check if coveralls binary exists
+        if ! command -v coveralls &> /dev/null; then
+          echo "Coveralls binary not found. Skipping coverage report."
+          [ "${{ inputs.fail-on-error }}" == "false" ] && exit 0
+          exit 1
+        fi
+        coveralls report ${{ inputs.debug == 'true' && '--debug' || '' }} ${{ inputs.measure == 'true' && '--measure' || '' }} ${{ inputs.fail-on-error == 'false' && '--no-fail' || '' }} ${{ inputs.allow-empty == 'true' && '--allow-empty' || '' }} ${{ inputs.base-path && format('--base-path {0}', inputs.base-path) || '' }} ${{ inputs.build-number && format('--build-number {0}', inputs.build-number) || '' }} ${{ inputs.format && format('--format {0}', inputs.format) || '' }} ${{ inputs.file || inputs.path-to-lcov }} ${{ inputs.files }}
+      env:
+        COVERALLS_DEBUG: ${{ inputs.debug }}
+        COVERALLS_CARRYFORWARD_FLAGS: ${{ inputs.carryforward }}
+        COVERALLS_FLAG_NAME: ${{ inputs.flag-name }}
+        COVERALLS_PARALLEL: ${{ inputs.parallel }}
+        COVERALLS_ENDPOINT: ${{ inputs.coveralls-endpoint }}
+        COVERALLS_GIT_BRANCH: ${{ inputs.git-branch }}
+        COVERALLS_GIT_COMMIT: ${{ inputs.git-commit }}
+        COVERALLS_REPO_TOKEN: ${{ inputs.github-token }}
+        COVERALLS_COMPARE_REF: ${{ inputs.compare-ref }}
+        COVERALLS_COMPARE_SHA: ${{ inputs.compare-sha }}
+        COVERALLS_SOURCE_HEADER: github-action
+
+    - name: Coverage report (Windows)
+      if: inputs.parallel-finished != 'true' && startsWith(runner.os, 'Windows')
+      shell: pwsh
+      run: |
+        # Check if coveralls binary exists
+        if (!(Get-Command coveralls -ErrorAction SilentlyContinue)) {
+          Write-Host "Coveralls binary not found. Skipping coverage report."
+          if ("${{ inputs.fail-on-error }}" -eq "false") {
+            exit 0
+          }
+          exit 1
+        }
+        coveralls report ${{ inputs.debug == 'true' && '--debug' || '' }} ${{ inputs.measure == 'true' && '--measure' || '' }} ${{ inputs.fail-on-error == 'false' && '--no-fail' || '' }} ${{ inputs.allow-empty == 'true' && '--allow-empty' || '' }} ${{ inputs.base-path && format('--base-path {0}', inputs.base-path) || '' }} ${{ inputs.build-number && format('--build-number {0}', inputs.build-number) || '' }} ${{ inputs.format && format('--format {0}', inputs.format) || '' }} ${{ inputs.file || inputs.path-to-lcov }} ${{ inputs.files }}
       env:
         COVERALLS_DEBUG: ${{ inputs.debug }}
         COVERALLS_CARRYFORWARD_FLAGS: ${{ inputs.carryforward }}
