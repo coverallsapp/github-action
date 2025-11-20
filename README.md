@@ -163,17 +163,21 @@ github-token: ${{ secrets.GITHUB_TOKEN }}
 
 ## Our Open-Source Promise
 
-Coveralls.io is always free for open-source projects. Create a [free account](https://coveralls.io/pricing) for your (public) repo at Coveralls, then use one of our [official integrations](https://docs.coveralls.io/integrations#official-integrations): [coverage-reporter](https://github.com/coverallsapp/coverage-reporter), [github-action](https://github.com/coverallsapp/github-action), or [orb](https://github.com/coverallsapp/orb) to upload coverage to the [Coveralls API](https://docs.coveralls.io/api-introduction).
+Coveralls.io is always free for open-source projects! 
 
-Additionally, over 30 [community-created language integrations](https://docs.coveralls.io/integrations#language-integrations) exist for coveralls, which you can find a list of [here](https://docs.coveralls.io/integrations#language-integrations).
+Create a [free account](https://coveralls.io/pricing) for your (public) repo at Coveralls, then use one of our [official integrations](https://docs.coveralls.io/integrations#official-integrations)—[coverage-reporter](https://github.com/coverallsapp/coverage-reporter), [github-action](https://github.com/coverallsapp/github-action) (this project!), or [orb](https://github.com/coverallsapp/orb)—to upload your coverage reports to the [Coveralls API](https://docs.coveralls.io/api-introduction).
+
+Additionally, over 30 [community-created language integrations](https://docs.coveralls.io/integrations#language-integrations) exist for Coveralls.io, which you can find [here](https://docs.coveralls.io/integrations#language-integrations).
 
 ## Getting help
 
-Issues? Questions? Reach out to us [here](https://github.com/coverallsapp/coverage-reporter/issues), or at support@coveralls.io.
+[Get started](https://docs.coveralls.io/) with our [documentation here](https://docs.coveralls.io/).
+
+Issues or Questions? Reach out to us [here](https://github.com/coverallsapp/github-action/issues), or at support@coveralls.io.
 
 ## Contributing
 
-[Bug reports](https://github.com/coverallsapp/coverage-reporter/issues) and [pull requests](https://github.com/coverallsapp/coverage-reporter/pulls) are welcome. 
+[Bug reports](https://github.com/coverallsapp/github-action/issues) and [pull requests](https://github.com/coverallsapp/github-action/pulls) are welcome. 
 
 ## License
 
