@@ -200,7 +200,7 @@ runs:
         cat coveralls-checksums.txt
 
         # Extract expected checksum
-        expected_checksum=$(grep "${platform_filename}" coveralls-checksums.txt | awk '{print $1}')
+        expected_checksum=$(grep "${platform_filename}" coveralls-checksums.txt | awk '{print $1}' || true)
         if [ -z "$expected_checksum" ]; then
           echo "Failed to extract checksum for ${platform_filename}"
           [ "${{ inputs.fail-on-error }}" == "false" ] && exit 0
