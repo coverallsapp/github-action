@@ -167,7 +167,7 @@ Coveralls.io is always free for open-source projects!
 
 Create a [free account](https://coveralls.io/pricing) for your (public) repo at Coveralls, then use one of our [official integrations](https://docs.coveralls.io/integrations#official-integrations)—[coverage-reporter](https://github.com/coverallsapp/coverage-reporter), [github-action](https://github.com/coverallsapp/github-action) (this project!), or [orb](https://github.com/coverallsapp/orb)—to upload your coverage reports to the [Coveralls API](https://docs.coveralls.io/api-introduction).
 
-Additionally, over 30 [community-created language integrations](https://docs.coveralls.io/integrations#language-integrations) exist for Coveralls.io, which you can find [here](https://docs.coveralls.io/integrations#language-integrations).
+Additionally, over 30 [community-created language integrations](https://docs.coveralls.io/integrations#language-integrations) exist for Coveralls.io.
 
 ## Getting help
 
