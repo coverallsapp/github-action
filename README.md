@@ -25,7 +25,7 @@ This action's step needs to run after your test suite has outputted a coverage r
 | `carryforward`               | _optional_ | Comma-separated flags used to carry forward results from previous builds if some of the parallel jobs are missing. Used only with `parallel-finished`. |
 | `coveralls-endpoint`         | _optional_ | Hostname and protocol: `https://<host>`; Specifies a [Coveralls Enterprise](https://enterprise.coveralls.io/) hostname. |
 | `allow-empty`                | _optional_ | Default: `false`. Don't fail if coverage report is empty or contains no coverage data. |
-| `base-path`                  | _optional_ | Path to the root folder of the project the coverage was collected in. Should be used in monorepos so that coveralls can process filenames from your coverage reports correctly (e.g. packages/my-subproject) |
+| `base-path`                  | _optional_ | Path to the root folder of the project where the coverage was collected. Should be used in monorepos so that coveralls can process filenames from your coverage reports correctly (e.g. packages/my-subproject) |
 | `git-branch`                 | _optional_ | Default: GITHUB_REF environment variable. Override the branch name. |
 | `git-commit`                 | _optional_ | Default: GITHUB_SHA environment variable. Override the commit SHA. |
 | `compare-ref`                | _optional_ | Branch name to compare coverage with. Specify if you want to always check coverage change for PRs against one branch. |
