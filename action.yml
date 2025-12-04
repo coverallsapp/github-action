@@ -115,7 +115,7 @@ runs:
         elif [ -f /opt/homebrew/bin/coveralls ]; then
           echo "/opt/homebrew/bin" >> $GITHUB_PATH
         else
-          echo "Coveralls binary not found after installation (MacOS)."
+          echo "Coveralls binary not found after installation (macOS)."
           [ "${{ inputs.fail-on-error }}" == "false" ] && exit 0
           exit 1
         fi
