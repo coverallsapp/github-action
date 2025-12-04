@@ -173,7 +173,7 @@ Additionally, over 30 [community-created language integrations](https://docs.cov
 
 [Get started](https://docs.coveralls.io/) with our [documentation here](https://docs.coveralls.io/).
 
-Issues or Questions? Reach out to us [here](https://github.com/coverallsapp/github-action/issues), or at support@coveralls.io.
+Issues or Questions? Reach out to us using [GitHub issues](https://github.com/coverallsapp/github-action/issues), or at support@coveralls.io.
 
 ## Contributing
 
