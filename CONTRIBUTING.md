@@ -1,4 +1,4 @@
-## How to contribute to the Coveralls Github Action
+## How to contribute to the Coveralls GitHub Action
 
 #### **Did you find a bug?**
 
