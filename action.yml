@@ -102,8 +102,10 @@ runs:
         # Enable debugging if 'debug' is true
         [ "${{ inputs.debug }}" == "true" ] && set -x
 
-        # Try to install coverage-reporter via Homebrew
-        if ! brew tap coverallsapp/coveralls --quiet || ! brew install coveralls --quiet; then
+        # Try to install coverage-reporter via Homebrew.
+        # The fully-qualified formula name auto-taps the repo and trusts only
+        # this formula, as required by tap trust in Homebrew 6.0.0+.
+        if ! brew install coverallsapp/coveralls/coveralls --quiet; then
           echo "Failed to install coveralls via Homebrew (macOS)."
           [ "${{ inputs.fail-on-error }}" == "false" ] && exit 0
           exit 1
