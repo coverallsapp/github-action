@@ -1,0 +1,38 @@
+name: Smoke Test v2 (macOS end-user chain)
+
+on: workflow_dispatch
+
+jobs:
+  smoke:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, macos-15]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create minimal lcov coverage fixture
+        run: |
+          mkdir -p coverage
+          {
+            echo "SF:action.yml"
+            echo "DA:1,1"
+            echo "DA:2,1"
+            echo "DA:3,0"
+            echo "end_of_record"
+          } > coverage/lcov.info
+
+      - name: Run published action as an end user would (issue 264 scenario)
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          file: coverage/lcov.info
+          fail-on-error: true
+          debug: true
+
+      - name: Verify installed coverage-reporter binary
+        run: |
+          which coveralls
+          coveralls --version
