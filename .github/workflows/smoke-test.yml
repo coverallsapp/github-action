@@ -1,9 +1,15 @@
-name: Smoke Test v2 (macOS end-user chain)
+name: Smoke Test (published action)
+
+# Verifies the full end-user chain of the *published* v2 tag on every
+# supported platform: action resolution -> reporter install (Homebrew on
+# macOS, GitHub-release download on Linux/Windows) -> report upload.
+# Run it from the Actions tab after a release, a Homebrew major, or a
+# runner-image update.
 
 on:
   workflow_dispatch:
   push:
-    branches: [smoke-test-v2]
+    branches: [smoke-test-v2]  # temporary, for pre-merge validation; removed before merge
 
 jobs:
   smoke:
@@ -11,12 +17,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, macos-15]
+        os: [ubuntu-latest, macos-latest, macos-15, windows-latest]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Create minimal lcov coverage fixture
+        shell: bash
         run: |
           mkdir -p coverage
           {
@@ -27,7 +34,7 @@ jobs:
             echo "end_of_record"
           } > coverage/lcov.info
 
-      - name: Run published action as an end user would (issue 264 scenario)
+      - name: Run published action as an end user would
         uses: coverallsapp/github-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -36,6 +43,7 @@ jobs:
           debug: true
 
       - name: Verify installed coverage-reporter binary
+        shell: bash
         run: |
           which coveralls
           coveralls --version
