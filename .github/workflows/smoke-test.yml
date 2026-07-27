@@ -3,16 +3,25 @@ name: Smoke Test (published action)
 # Verifies the full end-user chain of the *published* v2 tag on every
 # supported platform: action resolution -> reporter install (Homebrew on
 # macOS, GitHub-release download on Linux/Windows) -> report upload.
-# Run it from the Actions tab after a release, a Homebrew major, or a
-# runner-image update.
+# Runs automatically after each release (once the v2 tag has been moved
+# by the Update Major Version Tag workflow).
+#
+# Run it manually after any change worth sanity-checking against the
+# published action -- e.g. a Homebrew major version, a runner-image
+# update, or an action update -- either way:
+#   - GitHub UI: Actions tab -> "Smoke Test (published action)" ->
+#     "Run workflow" -> keep branch "main" -> green "Run workflow" button
+#   - CLI: gh workflow run smoke-test.yml --repo coverallsapp/github-action
 
 on:
   workflow_dispatch:
-  push:
-    branches: [smoke-test-v2]  # temporary, for pre-merge validation; removed before merge
+  workflow_run:
+    workflows: ["Update Major Version Tag"]
+    types: [completed]
 
 jobs:
   smoke:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
