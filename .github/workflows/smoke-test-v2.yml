@@ -1,6 +1,9 @@
 name: Smoke Test v2 (macOS end-user chain)
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+  push:
+    branches: [smoke-test-v2]
 
 jobs:
   smoke:
