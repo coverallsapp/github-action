@@ -1,0 +1,58 @@
+name: Smoke Test (published action)
+
+# Verifies the full end-user chain of the *published* v2 tag on every
+# supported platform: action resolution -> reporter install (Homebrew on
+# macOS, GitHub-release download on Linux/Windows) -> report upload.
+# Runs automatically after each release (once the v2 tag has been moved
+# by the Update Major Version Tag workflow).
+#
+# Run it manually after any change worth sanity-checking against the
+# published action -- e.g. a Homebrew major version, a runner-image
+# update, or an action update -- either way:
+#   - GitHub UI: Actions tab -> "Smoke Test (published action)" ->
+#     "Run workflow" -> keep branch "main" -> green "Run workflow" button
+#   - CLI: gh workflow run smoke-test.yml --repo coverallsapp/github-action
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Update Major Version Tag"]
+    types: [completed]
+
+jobs:
+  smoke:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, macos-15, windows-latest]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create minimal lcov coverage fixture
+        shell: bash
+        run: |
+          mkdir -p coverage
+          {
+            echo "SF:action.yml"
+            echo "DA:1,1"
+            echo "DA:2,1"
+            echo "DA:3,0"
+            echo "end_of_record"
+          } > coverage/lcov.info
+
+      - name: Run published action as an end user would
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          file: coverage/lcov.info
+          fail-on-error: true
+          debug: true
+
+      - name: Verify installed coverage-reporter binary
+        shell: bash
+        run: |
+          which coveralls
+          coveralls --version
