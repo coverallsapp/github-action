@@ -63,3 +63,61 @@ jobs:
         run: |
           which coveralls
           coveralls --version
+
+  # Email alone is a weak alarm for a scheduled job: GitHub sends scheduled-run
+  # failure notifications only to whoever last edited the cron, and a wrong
+  # notification setting fails silently. Open an issue instead -- visible,
+  # persistent, and independent of anyone's inbox config.
+  report-failure:
+    needs: smoke
+    if: failure()
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Open or update the smoke-test failure issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          TRIGGER: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+
+          label="smoke-test-failure"
+          # Ensure the label exists; harmless if it already does.
+          gh label create "$label" --color B60205 \
+            --description "Published action failed its end-user smoke test" 2>/dev/null || true
+
+          body=$(cat <<EOF
+          The [smoke test]($RUN_URL) failed (trigger: \`$TRIGGER\`).
+
+          This workflow verifies the **published \`@v2\`** end-user chain on every supported
+          platform: action resolution → reporter install (Homebrew on macOS, GitHub-release
+          download on Linux/Windows) → report upload.
+
+          A failure here means **end users are likely broken right now**, even though nothing
+          in this repository changed.
+
+          Usual causes:
+          - a new \`coverage-reporter\` release
+          - a runner-image change (e.g. \`macos-latest\` moving to a new macOS version)
+          - a Homebrew change (tap trust, formula/linkage rules, bottle availability)
+
+          Run: $RUN_URL
+          EOF
+          )
+
+          # Reuse the open issue if there is one, so a recurring failure does not
+          # open a new issue every week.
+          existing=$(gh issue list --label "$label" --state open --limit 1 --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            echo "Commenting on existing issue #$existing"
+            gh issue comment "$existing" --body "$body"
+          else
+            echo "Opening a new issue"
+            gh issue create \
+              --title "Smoke test failed: published action is not installing correctly" \
+              --label "$label" \
+              --body "$body"
+          fi
